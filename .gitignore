@@ -32,6 +32,7 @@ agent/temp/
 temp/
 
 # OS and Editor files
+*.tsbuildinfo
 .DS_Store
 *.pem
 npm-debug.log*

@@ -1,22 +1,32 @@
 @echo off
-title School Cloud Print - Local Agent (Epson L6460)
+title School Cloud Print - Local Print Agent (Epson L6460)
 cd /d %~dp0
+
+echo ========================================================
+echo   School Cloud Print - Local Print Agent (Epson L6460)  
+echo   SMAN 3 Buru - Ruang Tata Usaha (TU)
+echo ========================================================
+echo.
 
 where node >nul 2>nul
 if %errorlevel% neq 0 (
-    echo ========================================================
-    echo   Menjalankan Mode Uji Coba Lokal via Python...
-    echo ========================================================
-    echo Node.js belum terpasang di PC ini.
-    echo Mengalihkan otomatis ke server uji coba mandiri...
+    echo [ERROR] Node.js belum terpasang di komputer ini!
+    echo Silakan unduh dan pasang Node.js dari https://nodejs.org
     echo.
-    python ..\app_local.py
     pause
     exit /b
 )
 
-echo ========================================================
-echo   Menjalankan Local Print Agent untuk Epson L6460 (Node.js)
-echo ========================================================
-node src/index.js
+if not exist node_modules (
+    echo Menginstal dependensi Print Agent...
+    call npm install
+)
+
+if not exist dist\index.js (
+    echo Mengompilasi Print Agent...
+    call npm run build
+)
+
+echo Menghubungkan Local Agent ke Server Cloud TU...
+call npm start
 pause
