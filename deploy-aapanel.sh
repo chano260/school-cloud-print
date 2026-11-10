@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# Prevent Next.js lockfile/yarn patch warnings on Linux servers
+export NEXT_IGNORE_INCORRECT_LOCKFILE=1
+
 echo "=========================================================="
 echo "  Deploying School Cloud Print Station (aaPanel Ready)    "
 echo "=========================================================="
@@ -8,6 +11,11 @@ echo "=========================================================="
 if [ ! -f .env ]; then
   echo "[1/5] Membuat file .env dari .env.example..."
   cp .env.example .env
+fi
+
+# Ensure NEXT_IGNORE_INCORRECT_LOCKFILE is in .env
+if ! grep -q "NEXT_IGNORE_INCORRECT_LOCKFILE" .env; then
+  echo "NEXT_IGNORE_INCORRECT_LOCKFILE=1" >> .env
 fi
 
 echo "[2/5] Menginstal dependensi Node.js untuk platform Linux..."
