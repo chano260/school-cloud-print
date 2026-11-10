@@ -15,7 +15,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ job: null });
     }
 
-    const origin = req.nextUrl.origin;
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const proto = req.headers.get('x-forwarded-proto') || 'https';
+    const origin = process.env.NEXTAUTH_URL || (host ? `${proto}://${host}` : 'https://cetak.smanegeri3buru.my.id');
+    
     return NextResponse.json({
       job: {
         ...job,
