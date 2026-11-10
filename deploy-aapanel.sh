@@ -21,7 +21,12 @@ echo "[4/5] Membersihkan cache dan mem-build aplikasi Next.js untuk Production..
 rm -rf .next
 npm run build
 
-echo "[5/5] Selesai! Anda bisa menjalankan aplikasi di aaPanel dengan:"
-echo "      - Node Project Manager: Startup File = server.js (Port 3003)"
-echo "      - Atau via PM2: pm2 start ecosystem.config.js"
+echo "[5/5] Memastikan proses server di-restart..."
+if command -v pm2 &> /dev/null; then
+  pm2 restart school-cloud-print 2>/dev/null || pm2 restart ecosystem.config.js 2>/dev/null || true
+fi
+
+echo "=========================================================="
+echo "  SUKSES! Aplikasi telah selesai di-build dan di-deploy.  "
+echo "  Buka aaPanel -> Website -> Node Project -> Restart.     "
 echo "=========================================================="
