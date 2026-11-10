@@ -1,0 +1,25 @@
+{
+  "name": "school-print-agent",
+  "version": "1.0.0",
+  "description": "Local Print Agent & Hardware Monitor for Epson EcoTank L6460",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "net-snmp": "^3.6.3",
+    "pdf-to-printer": "^5.6.0",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

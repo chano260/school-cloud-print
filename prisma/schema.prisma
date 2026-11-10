@@ -1,0 +1,82 @@
+// Prisma Schema for School Cloud Print Station
+datasource db {
+  provider = "sqlite" // Easy local database, switchable to "postgresql" for production cloud
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model EmployeeWhitelist {
+  id                 String   @id @default(uuid())
+  name               String
+  email              String   @unique
+  dailyQuotaOverride Int?     // If null, uses system default (20)
+  isAdmin            Boolean  @default(false)
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String?
+  email         String       @unique
+  image         String?
+  role          String       @default("TEACHER") // TEACHER, ADMIN
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  quotas        DailyQuota[]
+  printJobs     PrintJob[]
+}
+
+model DailyQuota {
+  id             String   @id @default(uuid())
+  userId         String
+  quotaDate      String   // Format YYYY-MM-DD
+  dailyLimit     Int      @default(20)
+  reservedPages  Int      @default(0) // Pages currently in queue (QUEUED/LOCKED/PRINTING)
+  committedPages Int      @default(0) // Pages successfully completed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, quotaDate])
+}
+
+model PrintJob {
+  id          String   @id @default(uuid())
+  userId      String
+  fileName    String
+  fileUrl     String
+  fileSize    Int      // Bytes
+  pageCount   Int      // Raw document pages
+  physicalSheets Int   // Actual paper sheets consumed
+  copies      Int      @default(1)
+  isColor     Boolean  @default(false)
+  isDuplex    Boolean  @default(false)
+  isLocked    Boolean  @default(false) // Hold & Release (Confidential)
+  status      String   @default("QUEUED") // QUEUED, LOCKED, RELEASED, PRINTING, COMPLETED, FAILED, EXPIRED
+  releasedAt  DateTime? // Timestamp when teacher clicks "Rilis Sekarang"
+  errorMessage String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([userId])
+}
+
+model PrinterTelemetry {
+  id          String   @id @default("epson_l6460")
+  status      String   @default("OFFLINE") // READY, PRINTING, OUT_OF_PAPER, OFFLINE
+  blackInk    Int      @default(100) // Percentage 0 - 100
+  cyanInk     Int      @default(100)
+  magentaInk  Int      @default(100)
+  yellowInk   Int      @default(100)
+  wasteBox    Int      @default(0)   // Percentage consumed (0=empty, 100=full)
+  lastSeenAt  DateTime @default(now())
+}

@@ -1,0 +1,40 @@
+{
+  "name": "school-cloud-print",
+  "version": "1.0.0",
+  "description": "School Cloud Print Station for Epson EcoTank L6460",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.378.0",
+    "next": "^14.2.3",
+    "next-auth": "^4.24.7",
+    "pdf-lib": "^1.17.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
+    "tailwind-merge": "^2.3.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "prisma": "^5.14.0",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}
