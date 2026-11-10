@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* UI/UX Pro Max — Productivity Tool Palette (Teal Focus + Action Orange) */
+    --color-primary: #0F766E;
+    --color-primary-hover: #115E59;
+    --color-primary-soft: #CCFBF1;
+    --color-on-primary: #FFFFFF;
+
+    --color-secondary: #0D9488;
+    --color-on-secondary: #FFFFFF;
+
+    --color-accent: #EA580C;
+    --color-accent-hover: #C2410C;
+    --color-accent-soft: #FFEDD5;
+    --color-on-accent: #FFFFFF;
+
+    --color-background: #F0FDFA;
+    --color-foreground: #134E4A;
+
+    --color-card: #FFFFFF;
+    --color-card-foreground: #0F172A;
+
+    --color-muted: #F1F5F9;
+    --color-muted-foreground: #475569;
+
+    --color-border: #CCFBF1;
+    --color-destructive: #DC2626;
+    --color-on-destructive: #FFFFFF;
+    --color-ring: #0D9488;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-card-foreground);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

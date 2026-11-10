@@ -57,25 +57,33 @@ Masukkan alamat IP printer Anda (misal `192.168.1.150`). Skrip akan memeriksa ap
 
 ---
 
-### Langkah 2: Menjalankan Web Portal Guru (Cloud / Server)
-1. Salin `.env.example` menjadi `.env` dan sesuaikan nilainya:
+### Langkah 2: Deploy Web Portal di aaPanel (VPS / Cloud Online)
+1. **Upload / Clone di aaPanel:**
+   Buka **Files** atau **Terminal** di aaPanel (misal di `/www/wwwroot/school-cloud-print`):
+   ```bash
+   git clone https://github.com/chano260/school-cloud-print.git /www/wwwroot/school-cloud-print
+   cd /www/wwwroot/school-cloud-print
+   ```
+2. **Konfigurasi `.env`:**
+   Salin `.env.example` menjadi `.env` dan sesuaikan nilainya:
    ```env
    DATABASE_URL="file:./dev.db"
+   NEXTAUTH_URL="https://print.sekolah-anda.sch.id"
    NEXTAUTH_SECRET="kunci-rahasia-anda"
    INITIAL_ADMIN_EMAIL="tu.sekolah@admin.smp.belajar.id"
    AGENT_SECRET_KEY="kunci-rahasia-agent-sekolah"
+   DEFAULT_DAILY_QUOTA=20
    ```
-2. Pasang dependensi dan jalankan database:
+3. **Jalankan Skrip Build Otomatis:**
    ```bash
-   npm install
-   npx prisma generate
-   npx prisma db push
+   bash deploy-aapanel.sh
    ```
-3. Jalankan aplikasi web:
-   ```bash
-   npm run dev
-   ```
-   Web dapat dibuka di browser: `http://localhost:3000` (atau domain hosting Anda).
+   *(Atau jalankan manual: `npm install && npx prisma generate && npx prisma db push && npm run build`)*
+4. **Daftarkan di Menu Website -> Node Project (aaPanel):**
+   - **Path:** `/www/wwwroot/school-cloud-print`
+   - **Run Opt:** `start` (atau **Startup File:** `server.js`)
+   - **Port:** `3000`
+   - **Domain:** Masukkan domain/subdomain Anda (misal `print.sekolah-anda.sch.id`) dan aktifkan SSL (Let's Encrypt).
 
 ---
 

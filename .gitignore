@@ -26,6 +26,7 @@ dist/
 
 # Local print uploads & temp files
 local_uploads/
+storage/
 agent/temp/
 temp/
 

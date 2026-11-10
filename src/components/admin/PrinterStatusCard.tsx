@@ -6,50 +6,77 @@ import { AlertTriangle, CheckCircle, WifiOff, FileWarning, Layers } from 'lucide
 
 interface PrinterStatusCardProps {
   status: PrinterStatus;
-  ink: InkLevels;
+  ink: any;
 }
 
 export default function PrinterStatusCard({ status, ink }: PrinterStatusCardProps) {
+  const normalizedInk: InkLevels = {
+    black: ink?.black ?? ink?.k ?? 90,
+    cyan: ink?.cyan ?? ink?.c ?? 65,
+    magenta: ink?.magenta ?? ink?.m ?? 70,
+    yellow: ink?.yellow ?? ink?.y ?? 40,
+    wasteBox: ink?.wasteBox ?? ink?.waste ?? 15,
+  };
+
   const getLowInkWarn = () => {
     const warnings: string[] = [];
-    if (ink.black < 15) warnings.push('Tinta Hitam');
-    if (ink.cyan < 15) warnings.push('Tinta Biru (Cyan)');
-    if (ink.magenta < 15) warnings.push('Tinta Merah (Magenta)');
-    if (ink.yellow < 15) warnings.push('Tinta Kuning');
-    if (ink.wasteBox > 85) warnings.push('Kotak Pembuangan (Maintenance Box) Hampir Penuh');
+    if (normalizedInk.black < 15) warnings.push('Tinta Hitam Menipis');
+    if (normalizedInk.cyan < 15) warnings.push('Tinta Biru (Cyan) Menipis');
+    if (normalizedInk.magenta < 15) warnings.push('Tinta Merah (Magenta) Menipis');
+    if (normalizedInk.yellow < 15) warnings.push('Tinta Kuning Menipis');
+    if (normalizedInk.wasteBox > 85) warnings.push('Kotak Pembuangan (Maintenance Box) Hampir Penuh');
     return warnings;
   };
 
   const warnings = getLowInkWarn();
 
+  const gauges = [
+    { label: 'Hitam (BK)', value: normalizedInk.black, barClass: 'bg-slate-900' },
+    { label: 'Cyan (C)', value: normalizedInk.cyan, barClass: 'bg-sky-500' },
+    { label: 'Magenta (M)', value: normalizedInk.magenta, barClass: 'bg-pink-500' },
+    { label: 'Yellow (Y)', value: normalizedInk.yellow, barClass: 'bg-amber-400' },
+    {
+      label: 'Waste Box',
+      value: normalizedInk.wasteBox,
+      barClass: normalizedInk.wasteBox > 80 ? 'bg-destructive' : 'bg-primary',
+    },
+  ];
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+    <section
+      aria-label="Status Perangkat Keras Printer"
+      className="bg-card rounded-2xl shadow-card border border-border p-5 sm:p-6 mb-6"
+    >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Perangkat Keras</span>
-          <h2 className="text-xl font-bold text-slate-800">Epson EcoTank L6460 (Ruang TU)</h2>
+          <span className="text-xs font-bold text-primary uppercase tracking-wider">
+            Telemetri Perangkat Keras SNMP
+          </span>
+          <h2 className="text-xl font-bold text-foreground mt-0.5">
+            Epson EcoTank L6460 • Ruang TU
+          </h2>
         </div>
 
         {/* Status Badge */}
         <div>
           {status === 'READY' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <CheckCircle className="w-4 h-4" /> Siap Mencetak
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary-soft text-foreground border border-teal-300">
+              <CheckCircle className="w-4 h-4 text-primary" aria-hidden="true" /> Siap Mencetak
             </span>
           )}
           {status === 'PRINTING' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 animate-pulse">
-              <Layers className="w-4 h-4" /> Sedang Mencetak...
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-100 text-teal-900 border border-teal-300 animate-pulse">
+              <Layers className="w-4 h-4 text-primary" aria-hidden="true" /> Sedang Mencetak...
             </span>
           )}
           {status === 'OUT_OF_PAPER' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-300 animate-bounce">
-              <FileWarning className="w-4 h-4" /> Kertas Habis!
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-red-100 text-destructive border border-red-300 animate-bounce">
+              <FileWarning className="w-4 h-4" aria-hidden="true" /> Kertas Habis!
             </span>
           )}
           {status === 'OFFLINE' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-              <WifiOff className="w-4 h-4" /> Agent Offline
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+              <WifiOff className="w-4 h-4" aria-hidden="true" /> Agent Lokal Offline
             </span>
           )}
         </div>
@@ -57,74 +84,37 @@ export default function PrinterStatusCard({ status, ink }: PrinterStatusCardProp
 
       {/* Warnings Banner */}
       {warnings.length > 0 && (
-        <div className="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs flex items-start gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div
+          role="alert"
+          className="mb-5 p-3.5 bg-accent-soft border border-orange-200 rounded-xl text-orange-950 text-xs flex items-start gap-2.5"
+        >
+          <AlertTriangle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
           <div>
-            <span className="font-semibold">Peringatan Suplai:</span> Segera siapkan isi ulang untuk {warnings.join(', ')}.
+            <span className="font-bold">Peringatan Suplai Printer:</span> {warnings.join(', ')}.
           </div>
         </div>
       )}
 
       {/* Ink Progress Bars (CMYK + Maintenance Box) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        {/* Black */}
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-700">
-            <span>Hitam (BK)</span>
-            <span>{ink.black}%</span>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+        {gauges.map((g) => (
+          <div
+            key={g.label}
+            className="bg-muted/60 p-3.5 rounded-xl border border-slate-200/80 last:col-span-2 sm:last:col-span-1"
+          >
+            <div className="flex justify-between items-center text-xs font-semibold mb-2 text-card-foreground">
+              <span>{g.label}</span>
+              <span className="font-mono tabular-nums font-bold">{g.value}%</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+              <div
+                className={`${g.barClass} h-full rounded-full transition-all duration-300`}
+                style={{ width: `${g.value}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div className="bg-slate-900 h-2 rounded-full" style={{ width: `${ink.black}%` }} />
-          </div>
-        </div>
-
-        {/* Cyan */}
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-700">
-            <span>Cyan (C)</span>
-            <span>{ink.cyan}%</span>
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div className="bg-sky-500 h-2 rounded-full" style={{ width: `${ink.cyan}%` }} />
-          </div>
-        </div>
-
-        {/* Magenta */}
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-700">
-            <span>Magenta (M)</span>
-            <span>{ink.magenta}%</span>
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div className="bg-pink-500 h-2 rounded-full" style={{ width: `${ink.magenta}%` }} />
-          </div>
-        </div>
-
-        {/* Yellow */}
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-          <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-700">
-            <span>Yellow (Y)</span>
-            <span>{ink.yellow}%</span>
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div className="bg-amber-400 h-2 rounded-full" style={{ width: `${ink.yellow}%` }} />
-          </div>
-        </div>
-
-        {/* Maintenance Box */}
-        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 col-span-2 sm:col-span-1">
-          <div className="flex justify-between items-center text-xs font-semibold mb-1 text-slate-700">
-            <span>Waste Box</span>
-            <span>{ink.wasteBox}%</span>
-          </div>
-          <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-            <div
-              className={`h-2 rounded-full ${ink.wasteBox > 80 ? 'bg-red-500' : 'bg-slate-500'}`}
-              style={{ width: `${ink.wasteBox}%` }}
-            />
-          </div>
-        </div>
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
