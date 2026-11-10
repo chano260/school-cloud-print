@@ -4,10 +4,10 @@
   "description": "School Cloud Print Station for Epson EcoTank L6460",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3003",
     "build": "prisma generate && next build",
     "start": "node server.js",
-    "start:next": "next start",
+    "start:next": "next start -p 3003",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
