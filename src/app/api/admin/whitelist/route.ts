@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { importWhitelistRecords } from '@/lib/whitelist';
+import { getTodayDateString } from '@/lib/quota-ledger';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +47,45 @@ export async function POST(req: NextRequest) {
     ]);
 
     return NextResponse.json({ ok: true, ...result });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const id = String(body.id || '');
+    const dailyQuota = parseInt(String(body.dailyQuota), 10);
+
+    if (!id || isNaN(dailyQuota) || dailyQuota <= 0) {
+      return NextResponse.json({ error: 'ID pegawai dan kuota valid (> 0) wajib disertakan.' }, { status: 400 });
+    }
+
+    const updated = await prisma.employeeWhitelist.update({
+      where: { id },
+      data: { dailyQuotaOverride: dailyQuota },
+    });
+
+    // Also update today's active quota if the user already has a quota record
+    const today = getTodayDateString();
+    const user = await prisma.user.findUnique({
+      where: { email: updated.email },
+    });
+
+    if (user) {
+      await prisma.dailyQuota.updateMany({
+        where: {
+          userId: user.id,
+          quotaDate: today,
+        },
+        data: {
+          dailyLimit: dailyQuota,
+        },
+      });
+    }
+
+    return NextResponse.json({ ok: true, employee: updated });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

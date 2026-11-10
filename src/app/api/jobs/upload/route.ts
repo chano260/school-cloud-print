@@ -10,6 +10,12 @@ import { broadcastQueueUpdate, notifyAgentJobAvailable } from '@/lib/socket-brid
 export async function POST(req: NextRequest) {
   try {
     const user = await getActiveUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Sesi habis atau Anda belum memilih akun guru. Silakan pilih nama guru di halaman utama.' },
+        { status: 401 }
+      );
+    }
     const formData = await req.formData();
 
     const file = formData.get('file') as File | null;

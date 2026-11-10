@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Upload, Users, Plus, Check, AlertCircle, Trash2 } from 'lucide-react';
+import { Upload, Users, Plus, Check, AlertCircle, Trash2, Edit2, X } from 'lucide-react';
 
 interface EmployeeRecord {
   id: string;
@@ -19,6 +19,11 @@ export default function WhitelistManager() {
   const [nameInput, setNameInput] = useState('');
   const [quotaInput, setQuotaInput] = useState(20);
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Inline edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editQuotaVal, setEditQuotaVal] = useState<number>(20);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const fetchEmployees = async () => {
     try {
@@ -94,7 +99,43 @@ export default function WhitelistManager() {
     }
   };
 
+  const startEditQuota = (emp: EmployeeRecord) => {
+    setEditingId(emp.id);
+    setEditQuotaVal(emp.dailyQuotaOverride || 20);
+  };
+
+  const saveEditQuota = async (emp: EmployeeRecord) => {
+    if (!editQuotaVal || editQuotaVal <= 0) return;
+    setSavingEdit(true);
+    setStatusMsg(null);
+
+    try {
+      const res = await fetch('/api/admin/whitelist', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: emp.id,
+          dailyQuota: editQuotaVal,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal memperbarui kuota.');
+
+      setEditingId(null);
+      setStatusMsg({
+        type: 'success',
+        text: `Jatah kuota untuk ${emp.name} berhasil diubah menjadi ${editQuotaVal} lembar.`,
+      });
+      fetchEmployees();
+    } catch (err: any) {
+      setStatusMsg({ type: 'error', text: err.message });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const handleRemove = async (id: string) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus guru ini dari daftar?')) return;
     await fetch('/api/admin/whitelist', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -111,10 +152,10 @@ export default function WhitelistManager() {
       <div className="mb-4">
         <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
           <Users className="w-4 h-4 text-teal-600" aria-hidden="true" />
-          Daftar Nama Guru (Whitelist Pencetak)
+          Daftar Nama Guru & Pengaturan Kuota
         </h3>
         <p className="text-xs text-slate-400 mt-0.5">
-          Guru cukup mencari dan memilih namanya sendiri di halaman depan tanpa perlu menghafal email.
+          Admin TU dapat mengubah jatah kuota per guru sewaktu-waktu dan langsung berlaku hari ini.
         </p>
       </div>
 
@@ -136,7 +177,7 @@ export default function WhitelistManager() {
         </div>
       )}
 
-      {/* Tambah Guru Manual (Cukup Nama & Kuota) */}
+      {/* Tambah Guru Manual */}
       <form
         onSubmit={handleAddSingle}
         className="flex flex-col sm:flex-row gap-2.5 mb-4"
@@ -203,29 +244,81 @@ export default function WhitelistManager() {
             <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
                 <th className="py-2.5 px-3.5">Nama Guru</th>
-                <th className="py-2.5 px-3.5">Jatah Harian</th>
-                <th className="py-2.5 px-3.5 text-right">Hapus</th>
+                <th className="py-2.5 px-3.5">Jatah Kuota Harian</th>
+                <th className="py-2.5 px-3.5 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {employees.map((emp) => (
-                <tr key={emp.id} className="hover:bg-slate-50/70">
-                  <td className="py-2.5 px-3.5 font-medium text-slate-800">{emp.name}</td>
-                  <td className="py-2.5 px-3.5 font-mono text-slate-600">
-                    {emp.dailyQuotaOverride || 20} lembar
-                  </td>
-                  <td className="py-2.5 px-3.5 text-right">
-                    <button
-                      type="button"
-                      onClick={() => handleRemove(emp.id)}
-                      className="p-1 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
-                      aria-label={`Hapus ${emp.name}`}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {employees.map((emp) => {
+                const isEditing = editingId === emp.id;
+                return (
+                  <tr key={emp.id} className="hover:bg-slate-50/70">
+                    <td className="py-2.5 px-3.5 font-medium text-slate-800">
+                      {emp.name}
+                    </td>
+
+                    {/* Kolom Jatah Kuota (dengan Edit Inline) */}
+                    <td className="py-2 px-3.5">
+                      {isEditing ? (
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="1"
+                            max="500"
+                            autoFocus
+                            value={editQuotaVal}
+                            onChange={(e) => setEditQuotaVal(parseInt(e.target.value, 10) || 1)}
+                            className="w-16 h-8 px-2 border border-teal-500 rounded-lg text-xs font-mono font-bold text-slate-900 bg-white focus:outline-none"
+                          />
+                          <span className="text-[11px] text-slate-500">lbr</span>
+                          <button
+                            type="button"
+                            onClick={() => saveEditQuota(emp)}
+                            disabled={savingEdit}
+                            title="Simpan Perubahan"
+                            className="w-7 h-7 rounded-lg bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center cursor-pointer transition-colors"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingId(null)}
+                            title="Batal"
+                            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-semibold text-slate-700">
+                            {emp.dailyQuotaOverride || 20} lembar
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => startEditQuota(emp)}
+                            title="Edit Jatah Kuota Guru Ini"
+                            className="p-1 rounded-md text-slate-400 hover:text-teal-600 hover:bg-teal-50 cursor-pointer transition-colors"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </td>
+
+                    <td className="py-2.5 px-3.5 text-right">
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(emp.id)}
+                        className="p-1 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
+                        aria-label={`Hapus ${emp.name}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

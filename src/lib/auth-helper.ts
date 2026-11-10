@@ -3,47 +3,48 @@ import { prisma } from './prisma';
 import { validateEmployeeAccess } from './whitelist';
 
 export const SESSION_COOKIE_NAME = 'scp_user_email';
+export const ADMIN_COOKIE_NAME = 'scp_admin_auth';
 
 /**
- * Resolves the active user from session cookie, or falls back to a default demo teacher
- * when no session cookie is set so the portal works out-of-the-box on initial deployment.
+ * Resolves the active user from session cookie.
+ * Returns null if user is not logged in / has not selected their profile yet.
  */
 export async function getActiveUser() {
   const cookieStore = cookies();
   const cookieEmail = cookieStore.get(SESSION_COOKIE_NAME)?.value?.trim().toLowerCase();
 
-  if (cookieEmail) {
-    const existing = await prisma.user.findUnique({ where: { email: cookieEmail } });
-    if (existing) return existing;
+  if (!cookieEmail) {
+    return null;
   }
 
-  // Ensure default initial admin & demo teacher exist in Whitelist + User table
-  const defaultEmail = cookieEmail || 'guru.demo@guru.smp.belajar.id';
-  const defaultName = cookieEmail ? cookieEmail.split('@')[0] : 'Guru Demo (Belajar.id)';
+  const existing = await prisma.user.findUnique({ where: { email: cookieEmail } });
+  if (existing) return existing;
 
-  await prisma.employeeWhitelist.upsert({
-    where: { email: defaultEmail },
-    update: {},
-    create: {
-      name: defaultName,
-      email: defaultEmail,
-      dailyQuotaOverride: 20,
-      isAdmin: false,
-      isActive: true,
-    },
+  // Fallback to whitelist match if user record is not yet provisioned
+  const employee = await prisma.employeeWhitelist.findUnique({
+    where: { email: cookieEmail },
   });
 
-  const user = await prisma.user.upsert({
-    where: { email: defaultEmail },
-    update: {},
-    create: {
-      name: defaultName,
-      email: defaultEmail,
-      role: 'TEACHER',
-    },
-  });
+  if (employee && employee.isActive) {
+    return await prisma.user.create({
+      data: {
+        name: employee.name,
+        email: employee.email,
+        role: employee.isAdmin ? 'ADMIN' : 'TEACHER',
+      },
+    });
+  }
 
-  return user;
+  return null;
+}
+
+/**
+ * Checks if current request has authenticated Admin TU privileges.
+ */
+export async function isCurrentUserAdmin() {
+  const cookieStore = cookies();
+  const adminAuth = cookieStore.get(ADMIN_COOKIE_NAME)?.value;
+  return adminAuth === 'authenticated';
 }
 
 /**

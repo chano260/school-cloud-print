@@ -6,6 +6,9 @@ import { broadcastQueueUpdate, notifyAgentJobAvailable } from '@/lib/socket-brid
 export async function POST(req: NextRequest) {
   try {
     const user = await getActiveUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Sesi habis. Silakan pilih akun guru kembali.' }, { status: 401 });
+    }
     const { jobId } = await req.json();
 
     if (!jobId) {

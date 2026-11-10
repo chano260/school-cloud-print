@@ -7,6 +7,10 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const user = await getActiveUser();
+    if (!user) {
+      return NextResponse.json({ authenticated: false, user: null }, { status: 200 });
+    }
+
     const defaultLimit = parseInt(process.env.DEFAULT_DAILY_QUOTA || '20', 10);
     const quota = await getOrCreateTodayQuota(user.id, defaultLimit);
 
@@ -14,6 +18,7 @@ export async function GET() {
     const remaining = Math.max(0, quota.dailyLimit - usedToday);
 
     return NextResponse.json({
+      authenticated: true,
       dailyLimit: quota.dailyLimit,
       usedToday,
       committedPages: quota.committedPages,
