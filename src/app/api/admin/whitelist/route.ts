@@ -4,10 +4,19 @@ import { importWhitelistRecords } from '@/lib/whitelist';
 
 export const dynamic = 'force-dynamic';
 
+function slugifyNameToEmail(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.+|\.+$/g, '');
+  return `${slug || 'guru'}@guru.sman3buru.belajar.id`;
+}
+
 export async function GET() {
   try {
     const employees = await prisma.employeeWhitelist.findMany({
-      orderBy: [{ isAdmin: 'desc' }, { name: 'asc' }],
+      where: { isActive: true },
+      orderBy: [{ name: 'asc' }],
     });
     return NextResponse.json({ employees });
   } catch (err: any) {
@@ -19,16 +28,17 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const name = String(body.name || '').trim();
-    const email = String(body.email || '').trim().toLowerCase();
+    const rawEmail = String(body.email || '').trim().toLowerCase();
+    const email = rawEmail && rawEmail.includes('@') ? rawEmail : slugifyNameToEmail(name);
     const dailyQuota = body.dailyQuota ? parseInt(String(body.dailyQuota), 10) : 20;
     const isAdmin = Boolean(body.isAdmin);
 
-    if (!name || !email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Nama dan email pegawai wajib diisi dengan benar.' }, { status: 400 });
+    if (!name) {
+      return NextResponse.json({ error: 'Nama guru wajib diisi.' }, { status: 400 });
     }
 
     if (/@siswa\..*belajar\.id$/i.test(email)) {
-      return NextResponse.json({ error: 'Domain email siswa (@siswa.*) tidak diizinkan masuk whitelist.' }, { status: 400 });
+      return NextResponse.json({ error: 'Akun siswa (@siswa.*) tidak diizinkan masuk daftar guru.' }, { status: 400 });
     }
 
     const result = await importWhitelistRecords([

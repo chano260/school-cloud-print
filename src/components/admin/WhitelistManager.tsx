@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Upload, Users, Plus, Check, AlertCircle, Trash2, ShieldCheck } from 'lucide-react';
+import { Upload, Users, Plus, Check, AlertCircle, Trash2 } from 'lucide-react';
 
 interface EmployeeRecord {
   id: string;
@@ -17,7 +17,6 @@ export default function WhitelistManager() {
   const [uploading, setUploading] = useState(false);
   const [employees, setEmployees] = useState<EmployeeRecord[]>([]);
   const [nameInput, setNameInput] = useState('');
-  const [emailInput, setEmailInput] = useState('');
   const [quotaInput, setQuotaInput] = useState(20);
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -58,7 +57,7 @@ export default function WhitelistManager() {
 
       setStatusMsg({
         type: 'success',
-        text: `Berhasil mengimpor! ${data.imported} pegawai ditambahkan, ${data.updated} pegawai diperbarui.`,
+        text: `Berhasil mengimpor! ${data.imported} guru ditambahkan, ${data.updated} diperbarui.`,
       });
       setFile(null);
       fetchEmployees();
@@ -71,7 +70,7 @@ export default function WhitelistManager() {
 
   const handleAddSingle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nameInput || !emailInput) return;
+    if (!nameInput.trim()) return;
 
     setStatusMsg(null);
     try {
@@ -79,18 +78,16 @@ export default function WhitelistManager() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: nameInput,
-          email: emailInput,
+          name: nameInput.trim(),
           dailyQuota: quotaInput,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal menambahkan pegawai.');
+      if (!res.ok) throw new Error(data.error || 'Gagal menambahkan guru.');
 
       setNameInput('');
-      setEmailInput('');
       setQuotaInput(20);
-      setStatusMsg({ type: 'success', text: 'Pegawai berhasil disimpan ke daftar whitelist.' });
+      setStatusMsg({ type: 'success', text: 'Nama guru berhasil ditambahkan ke daftar.' });
       fetchEmployees();
     } catch (err: any) {
       setStatusMsg({ type: 'error', text: err.message });
@@ -108,32 +105,30 @@ export default function WhitelistManager() {
 
   return (
     <section
-      aria-label="Manajemen Whitelist Pegawai"
-      className="bg-card rounded-2xl shadow-card border border-border p-5 sm:p-6 mb-6"
+      aria-label="Manajemen Daftar Guru"
+      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 mb-5"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" aria-hidden="true" />
-            Daftar Putih Pegawai (Whitelist Guru Belajar.id)
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Hanya pegawai di daftar ini yang dapat masuk dengan akun Belajar.id dan mencetak dokumen.
-          </p>
-        </div>
+      <div className="mb-4">
+        <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <Users className="w-4 h-4 text-teal-600" aria-hidden="true" />
+          Daftar Nama Guru (Whitelist Pencetak)
+        </h3>
+        <p className="text-xs text-slate-400 mt-0.5">
+          Guru cukup mencari dan memilih namanya sendiri di halaman depan tanpa perlu menghafal email.
+        </p>
       </div>
 
       {statusMsg && (
         <div
           role="status"
-          className={`mb-4 p-3.5 rounded-xl text-xs font-medium flex items-center gap-2 ${
+          className={`mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
             statusMsg.type === 'success'
-              ? 'bg-primary-soft/70 border border-teal-300 text-foreground'
-              : 'bg-red-50 border border-red-200 text-destructive'
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border border-rose-200 text-rose-700'
           }`}
         >
           {statusMsg.type === 'success' ? (
-            <Check className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+            <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" aria-hidden="true" />
           ) : (
             <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           )}
@@ -141,13 +136,47 @@ export default function WhitelistManager() {
         </div>
       )}
 
+      {/* Tambah Guru Manual (Cukup Nama & Kuota) */}
+      <form
+        onSubmit={handleAddSingle}
+        className="flex flex-col sm:flex-row gap-2.5 mb-4"
+      >
+        <input
+          type="text"
+          placeholder="Ketik Nama Lengkap Guru (contoh: Budi Santoso, S.Pd)"
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
+          className="flex-1 h-10 px-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 h-10">
+            <span className="text-xs text-slate-400">Kuota:</span>
+            <input
+              type="number"
+              min="1"
+              max="500"
+              value={quotaInput}
+              onChange={(e) => setQuotaInput(parseInt(e.target.value, 10) || 20)}
+              className="w-12 bg-transparent text-sm font-mono font-bold text-slate-800 text-center focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            className="h-10 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+          >
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            Tambah Guru
+          </button>
+        </div>
+      </form>
+
       {/* Upload Excel Box */}
-      <form onSubmit={handleUploadExcel} className="flex flex-col sm:flex-row items-center gap-3 mb-5">
+      <form onSubmit={handleUploadExcel} className="flex flex-col sm:flex-row items-center gap-2.5 mb-5 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
         <label className="w-full sm:flex-1 cursor-pointer">
-          <div className="min-h-[44px] flex items-center gap-2.5 px-4 py-2.5 border border-slate-200 rounded-xl hover:border-primary bg-background/50 transition-colors text-sm text-card-foreground">
-            <Upload className="w-4 h-4 text-primary" aria-hidden="true" />
+          <div className="h-9 flex items-center gap-2 px-3 rounded-lg bg-white border border-slate-200 hover:border-teal-500 transition-colors text-xs text-slate-600">
+            <Upload className="w-3.5 h-3.5 text-teal-600" aria-hidden="true" />
             <span className="truncate">
-              {file ? file.name : 'Pilih Berkas Excel (.xlsx, .csv) Daftar Guru'}
+              {file ? file.name : 'Atau impor banyak sekaligus dari Excel (.xlsx / .csv)'}
             </span>
           </div>
           <input
@@ -161,92 +190,38 @@ export default function WhitelistManager() {
         <button
           type="submit"
           disabled={!file || uploading}
-          className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-primary hover:bg-primary-hover disabled:bg-slate-200 text-primary-foreground text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer"
+          className="w-full sm:w-auto h-9 px-4 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
         >
-          {uploading ? 'Mengimpor...' : 'Impor Excel Pegawai'}
+          {uploading ? 'Mengimpor...' : 'Impor Excel'}
         </button>
       </form>
 
-      {/* Quick Manual Add Employee Form */}
-      <form
-        onSubmit={handleAddSingle}
-        className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-4 rounded-xl bg-muted/60 border border-slate-200/80 mb-5"
-      >
-        <div className="sm:col-span-4">
-          <input
-            type="text"
-            placeholder="Nama Lengkap Guru"
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
-            className="w-full min-h-[42px] px-3.5 py-2 rounded-lg border border-slate-200 bg-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          />
-        </div>
-        <div className="sm:col-span-5">
-          <input
-            type="email"
-            placeholder="budi@guru.smp.belajar.id"
-            value={emailInput}
-            onChange={(e) => setEmailInput(e.target.value)}
-            className="w-full min-h-[42px] px-3.5 py-2 rounded-lg border border-slate-200 bg-white text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          />
-        </div>
-        <div className="sm:col-span-1">
-          <input
-            type="number"
-            min="1"
-            max="500"
-            title="Kuota Harian"
-            value={quotaInput}
-            onChange={(e) => setQuotaInput(parseInt(e.target.value, 10) || 20)}
-            className="w-full min-h-[42px] px-2.5 py-2 rounded-lg border border-slate-200 bg-white text-sm font-mono text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <button
-            type="submit"
-            className="w-full min-h-[42px] px-3 py-2 bg-secondary hover:bg-primary text-white text-xs font-bold rounded-lg transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" aria-hidden="true" />
-            Tambah
-          </button>
-        </div>
-      </form>
-
-      {/* Registered Employees List */}
+      {/* Tabel Daftar Guru */}
       {employees.length > 0 && (
         <div className="overflow-x-auto border border-slate-200/80 rounded-xl">
           <table className="w-full text-left text-xs">
-            <thead className="bg-muted text-muted-foreground uppercase font-bold">
+            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
               <tr>
-                <th className="py-2.5 px-3.5">Nama Pegawai</th>
-                <th className="py-2.5 px-3.5">Email Belajar.id</th>
-                <th className="py-2.5 px-3.5">Kuota Harian</th>
-                <th className="py-2.5 px-3.5 text-right">Aksi</th>
+                <th className="py-2.5 px-3.5">Nama Guru</th>
+                <th className="py-2.5 px-3.5">Jatah Harian</th>
+                <th className="py-2.5 px-3.5 text-right">Hapus</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {employees.map((emp) => (
-                <tr key={emp.id} className="hover:bg-background/40">
-                  <td className="py-2.5 px-3.5 font-semibold text-card-foreground flex items-center gap-1.5">
-                    {emp.name}
-                    {emp.isAdmin && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-primary-soft text-primary rounded text-[10px] font-bold">
-                        <ShieldCheck className="w-3 h-3" aria-hidden="true" /> Admin
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-2.5 px-3.5 font-mono text-muted-foreground">{emp.email}</td>
-                  <td className="py-2.5 px-3.5 font-mono font-semibold text-foreground">
+                <tr key={emp.id} className="hover:bg-slate-50/70">
+                  <td className="py-2.5 px-3.5 font-medium text-slate-800">{emp.name}</td>
+                  <td className="py-2.5 px-3.5 font-mono text-slate-600">
                     {emp.dailyQuotaOverride || 20} lembar
                   </td>
                   <td className="py-2.5 px-3.5 text-right">
                     <button
                       type="button"
                       onClick={() => handleRemove(emp.id)}
-                      className="p-1.5 text-slate-400 hover:text-destructive rounded-lg cursor-pointer"
+                      className="p-1 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
                       aria-label={`Hapus ${emp.name}`}
                     >
-                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </td>
                 </tr>
@@ -255,13 +230,6 @@ export default function WhitelistManager() {
           </table>
         </div>
       )}
-
-      <p className="text-[11px] text-muted-foreground mt-3">
-        Format kolom Excel: <code className="font-mono">Nama</code>,{' '}
-        <code className="font-mono">Email</code> (contoh:{' '}
-        <code className="font-mono">budi@guru.smp.belajar.id</code>),{' '}
-        <code className="font-mono">Kuota</code> (opsional, default 20).
-      </p>
     </section>
   );
 }

@@ -1,31 +1,39 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import QuotaCard from '@/components/QuotaCard';
 import UploadForm from '@/components/UploadForm';
 import QueueList from '@/components/QueueList';
-import { Printer, AlertOctagon, Shield, UserCheck, LogIn } from 'lucide-react';
+import { Printer, AlertOctagon, Shield, Search, ChevronDown, Check, User } from 'lucide-react';
 import Link from 'next/link';
+
+interface TeacherOption {
+  id: string;
+  name: string;
+  email: string;
+  dailyQuotaOverride: number | null;
+}
 
 export default function TeacherHomePage() {
   const [quota, setQuota] = useState({ dailyLimit: 20, usedToday: 0, remaining: 20 });
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string }>({
     id: '',
-    name: 'Guru Demo (Belajar.id)',
-    email: 'guru.demo@guru.smp.belajar.id',
+    name: 'Pilih Nama Guru',
+    email: '',
   });
+  const [teachers, setTeachers] = useState<TeacherOption[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [printerStatus, setPrinterStatus] = useState<string>('READY');
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [emailInput, setEmailInput] = useState('');
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchDashboardData = async () => {
     try {
-      const [quotaRes, jobsRes, telemetryRes] = await Promise.all([
+      const [quotaRes, jobsRes, telemetryRes, authRes] = await Promise.all([
         fetch('/api/user/quota'),
         fetch('/api/jobs/my'),
         fetch('/api/printer/status'),
+        fetch('/api/auth/session'),
       ]);
 
       if (quotaRes.ok) {
@@ -44,6 +52,12 @@ export default function TeacherHomePage() {
         const tel = await telemetryRes.json();
         setPrinterStatus(tel.status || 'READY');
       }
+      if (authRes.ok) {
+        const aData = await authRes.json();
+        if (aData.teachers) {
+          setTeachers(aData.teachers);
+        }
+      }
     } catch (err) {
       console.error('Failed to load dashboard data', err);
     }
@@ -55,78 +69,76 @@ export default function TeacherHomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError(null);
+  const filteredTeachers = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return teachers;
+    return teachers.filter((t) => t.name.toLowerCase().includes(q));
+  }, [teachers, searchQuery]);
+
+  const handleSelectTeacher = async (teacher: TeacherOption) => {
     try {
       const res = await fetch('/api/auth/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailInput }),
+        body: JSON.stringify({ employeeId: teacher.id }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setAuthError(data.error || 'Gagal masuk.');
-        return;
+      if (res.ok) {
+        setPickerOpen(false);
+        setSearchQuery('');
+        fetchDashboardData();
       }
-      setShowLoginModal(false);
-      setEmailInput('');
-      fetchDashboardData();
-    } catch (err: any) {
-      setAuthError(err.message);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
-    <main className="min-h-screen bg-background text-card-foreground pb-16">
-      {/* Header */}
-      <header className="bg-card/95 backdrop-blur border-b border-border sticky top-0 z-20 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+    <main className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+      {/* Minimalist Top Header */}
+      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20">
+        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm">
-              <Printer className="w-5 h-5" aria-hidden="true" />
+            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
+              <Printer className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="font-bold text-base text-foreground leading-tight">
-                School Cloud Print
+              <h1 className="font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                Cloud Print SMAN 3 Buru
               </h1>
-              <p className="text-xs text-muted-foreground">
-                Epson EcoTank L6460 • Ruang TU
-              </p>
+              <p className="text-xs text-slate-400">Epson EcoTank L6460 • Ruang TU</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Printer Live Status Pill */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-border">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200/70">
               <span
-                className={`w-2.5 h-2.5 rounded-full ${
+                className={`w-2 h-2 rounded-full ${
                   printerStatus === 'READY'
                     ? 'bg-emerald-500'
                     : printerStatus === 'PRINTING'
-                    ? 'bg-primary animate-pulse'
+                    ? 'bg-teal-600 animate-pulse'
                     : printerStatus === 'OUT_OF_PAPER'
-                    ? 'bg-destructive animate-ping'
+                    ? 'bg-rose-500 animate-ping'
                     : 'bg-slate-400'
                 }`}
               />
-              <span className="text-xs font-semibold text-foreground">
+              <span className="text-xs font-medium text-slate-700">
                 {printerStatus === 'READY'
-                  ? 'Printer Siap'
+                  ? 'Siap'
                   : printerStatus === 'PRINTING'
-                  ? 'Sedang Mencetak'
+                  ? 'Mencetak'
                   : printerStatus === 'OUT_OF_PAPER'
-                  ? 'Kertas Habis!'
+                  ? 'Kertas Habis'
                   : 'Offline'}
               </span>
             </div>
 
             <Link
               href="/admin"
-              className="min-h-[38px] px-3 py-1.5 rounded-xl bg-muted hover:bg-primary-soft text-xs font-semibold text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="h-8 px-3 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs font-medium text-slate-600 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Shield className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-              <span className="hidden sm:inline">Panel TU</span>
+              <Shield className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+              <span>Admin TU</span>
             </Link>
           </div>
         </div>
@@ -134,66 +146,97 @@ export default function TeacherHomePage() {
 
       {/* Out of paper emergency banner */}
       {printerStatus === 'OUT_OF_PAPER' && (
-        <div role="alert" className="bg-destructive text-white py-3 px-4 shadow-sm animate-pulse">
-          <div className="max-w-4xl mx-auto flex items-center gap-3">
-            <AlertOctagon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-            <p className="text-sm font-semibold">
-              Peringatan Darurat: Kertas printer di ruang TU habis! Antrean cetak dijeda otomatis hingga kertas diisi ulang.
+        <div role="alert" className="bg-rose-600 text-white py-2.5 px-4 shadow-sm">
+          <div className="max-w-2xl mx-auto flex items-center gap-2.5">
+            <AlertOctagon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            <p className="text-xs sm:text-sm font-medium">
+              Kertas printer di ruang TU sedang habis. Antrean dijeda otomatis sampai kertas diisi.
             </p>
           </div>
         </div>
       )}
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 pt-6">
-        {/* Active Teacher Identity Bar */}
-        <div className="bg-card rounded-2xl border border-border px-4 py-3 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-card">
-          <div className="flex items-center gap-2.5 text-xs">
-            <UserCheck className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
-            <span className="text-muted-foreground">Masuk sebagai:</span>
-            <span className="font-bold text-foreground">{currentUser.name}</span>
-            <span className="font-mono text-muted-foreground">({currentUser.email})</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowLoginModal(!showLoginModal)}
-            className="text-xs font-semibold text-primary hover:text-primary-hover inline-flex items-center gap-1 cursor-pointer self-end sm:self-auto"
-          >
-            <LogIn className="w-3.5 h-3.5" aria-hidden="true" />
-            Ganti Akun Belajar.id
-          </button>
-        </div>
-
-        {showLoginModal && (
-          <form
-            onSubmit={handleLoginSubmit}
-            className="bg-card rounded-2xl border border-primary/30 p-4 mb-5 shadow-elevated"
-          >
-            <label htmlFor="belajar-email" className="block text-xs font-bold text-foreground uppercase mb-2">
-              Masukkan Email Resmi Guru (@guru.*.belajar.id)
-            </label>
-            {authError && (
-              <p className="text-xs text-destructive font-medium mb-2">{authError}</p>
-            )}
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                id="belajar-email"
-                type="email"
-                required
-                placeholder="nama.guru@guru.smp.belajar.id"
-                value={emailInput}
-                onChange={(e) => setEmailInput(e.target.value)}
-                className="flex-1 min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              />
-              <button
-                type="submit"
-                className="min-h-[42px] px-5 py-2 bg-primary hover:bg-primary-hover text-primary-foreground text-xs font-bold rounded-xl cursor-pointer transition-colors"
-              >
-                Verifikasi Whitelist
-              </button>
+      {/* Main Content Container */}
+      <div className="max-w-2xl mx-auto px-4 pt-5">
+        {/* Searchable Teacher Name Selector Card */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 mb-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                  Nama Guru Pencetak
+                </p>
+                <p className="text-sm sm:text-base font-bold text-slate-900 truncate">
+                  {currentUser.name}
+                </p>
+              </div>
             </div>
-          </form>
-        )}
+
+            <button
+              type="button"
+              onClick={() => setPickerOpen(!pickerOpen)}
+              className="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 inline-flex items-center gap-1.5 cursor-pointer transition-colors flex-shrink-0"
+            >
+              <span>{pickerOpen ? 'Tutup' : 'Ganti Nama Guru'}</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform ${pickerOpen ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+
+          {/* Dropdown Cari Nama Guru */}
+          {pickerOpen && (
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <div className="relative mb-2.5">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Ketik nama Anda untuk mencari..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-10 pl-9 pr-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white"
+                />
+              </div>
+
+              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-100 bg-slate-50/50">
+                {filteredTeachers.length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-4">
+                    Nama tidak ditemukan. Minta Admin TU menambahkan nama Anda di menu Admin TU.
+                  </p>
+                ) : (
+                  filteredTeachers.map((t) => {
+                    const isSelected = t.email === currentUser.email;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => handleSelectTeacher(t)}
+                        className={`w-full px-3.5 py-2.5 text-left flex items-center justify-between text-sm transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-teal-50/80 text-teal-900 font-semibold'
+                            : 'hover:bg-white text-slate-700'
+                        }`}
+                      >
+                        <span className="truncate">{t.name}</span>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="text-[11px] font-mono text-slate-400">
+                            Kuota {t.dailyQuotaOverride || 20} lbr
+                          </span>
+                          {isSelected && <Check className="w-4 h-4 text-teal-600" />}
+                        </div>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         <QuotaCard
           dailyLimit={quota.dailyLimit}

@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    /* UI/UX Pro Max — Productivity Tool Palette (Teal Focus + Action Orange) */
-    --color-primary: #0F766E;
-    --color-primary-hover: #115E59;
-    --color-primary-soft: #CCFBF1;
+    /* Minimalist shadcn/ui + Emerald-Slate Modern Palette */
+    --color-primary: #0F172A;
+    --color-primary-hover: #1E293B;
+    --color-primary-soft: #F1F5F9;
     --color-on-primary: #FFFFFF;
 
     --color-secondary: #0D9488;
@@ -15,19 +15,19 @@
 
     --color-accent: #EA580C;
     --color-accent-hover: #C2410C;
-    --color-accent-soft: #FFEDD5;
+    --color-accent-soft: #FFF7ED;
     --color-on-accent: #FFFFFF;
 
-    --color-background: #F0FDFA;
-    --color-foreground: #134E4A;
+    --color-background: #F8FAFC;
+    --color-foreground: #0F172A;
 
     --color-card: #FFFFFF;
     --color-card-foreground: #0F172A;
 
     --color-muted: #F1F5F9;
-    --color-muted-foreground: #475569;
+    --color-muted-foreground: #64748B;
 
-    --color-border: #CCFBF1;
+    --color-border: #E2E8F0;
     --color-destructive: #DC2626;
     --color-on-destructive: #FFFFFF;
     --color-ring: #0D9488;

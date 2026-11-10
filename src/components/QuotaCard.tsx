@@ -1,69 +1,53 @@
 'use client';
 
 import React from 'react';
-import { FileCheck2, Sparkles } from 'lucide-react';
 
 interface QuotaCardProps {
   dailyLimit: number;
-  usedToday: number; // committed + reserved
+  usedToday: number;
   remaining: number;
 }
 
 export default function QuotaCard({ dailyLimit, usedToday, remaining }: QuotaCardProps) {
   const percentage = Math.min(100, Math.round((usedToday / (dailyLimit || 1)) * 100));
 
-  let progressColor = 'bg-primary';
-  let statusBadge = 'bg-primary-soft text-foreground border-border';
-  if (percentage >= 90) {
-    progressColor = 'bg-destructive';
-    statusBadge = 'bg-red-50 text-destructive border-red-200';
-  } else if (percentage >= 70) {
-    progressColor = 'bg-accent';
-    statusBadge = 'bg-accent-soft text-accent border-orange-200';
-  }
+  let barColor = 'bg-teal-600';
+  if (percentage >= 90) barColor = 'bg-rose-500';
+  else if (percentage >= 70) barColor = 'bg-amber-500';
 
   return (
     <section
       aria-label="Status Kuota Cetak Harian"
-      className="bg-card rounded-2xl shadow-card border border-border p-5 sm:p-6 mb-6 transition-shadow"
+      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 mb-5"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div className="flex items-center justify-between gap-4 mb-3">
         <div>
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
-            Jatah Kuota Harian Guru
-          </span>
-          <div className="flex items-baseline gap-2 mt-1">
-            <h2 className="text-3xl font-bold text-foreground font-mono tabular-nums">
+          <p className="text-xs font-medium text-slate-500">Jatah Kuota Hari Ini</p>
+          <div className="flex items-baseline gap-1.5 mt-0.5">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 font-mono tabular-nums">
               {remaining}
-            </h2>
-            <span className="text-sm font-medium text-muted-foreground">
-              lembar tersisa hari ini
             </span>
+            <span className="text-sm text-slate-500">lembar tersisa</span>
           </div>
         </div>
 
-        <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2">
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border font-mono tabular-nums ${statusBadge}`}
-          >
-            <FileCheck2 className="w-3.5 h-3.5" aria-hidden="true" />
+        <div className="text-right">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold font-mono tabular-nums">
             {usedToday} / {dailyLimit} Lembar
           </span>
-          <p className="text-xs text-muted-foreground">Reset otomatis pukul 00:00 WIB</p>
+          <p className="text-[11px] text-slate-400 mt-1">Reset otomatis 00:00 WIT</p>
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div
-        className="w-full bg-muted rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/60"
+        className="w-full bg-slate-100 rounded-full h-2 overflow-hidden"
         role="progressbar"
         aria-valuenow={usedToday}
         aria-valuemin={0}
         aria-valuemax={dailyLimit}
       >
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${progressColor}`}
+          className={`h-full rounded-full transition-all duration-500 ease-out ${barColor}`}
           style={{ width: `${percentage}%` }}
         />
       </div>

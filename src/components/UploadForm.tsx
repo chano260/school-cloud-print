@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Upload, Lock, Printer, AlertCircle, FileText, CheckCircle2 } from 'lucide-react';
+import { Upload, Lock, AlertCircle, FileText, CheckCircle2, Minus, Plus } from 'lucide-react';
 
 interface UploadFormProps {
   remainingQuota: number;
@@ -64,8 +64,8 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
       setIsLocked(false);
       setSuccessMsg(
         isLocked
-          ? 'Dokumen rahasia berhasil dikunci! Silakan tekan "Rilis Sekarang" saat berada di depan printer TU.'
-          : 'Dokumen berhasil masuk antrean cetak!'
+          ? 'Dokumen dikunci! Tekan "Rilis Sekarang" saat Anda sudah di depan printer TU.'
+          : 'Dokumen berhasil dikirim ke antrean cetak!'
       );
       onUploadSuccess?.();
     } catch (err: any) {
@@ -78,22 +78,17 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-card rounded-2xl shadow-card border border-border p-5 sm:p-6 mb-6"
+      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 mb-5"
     >
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-bold text-foreground flex items-center gap-2.5">
-          <span className="w-8 h-8 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
-            <Printer className="w-4 h-4" aria-hidden="true" />
-          </span>
-          Kirim Dokumen Cetak
-        </h2>
-        <span className="text-xs font-medium text-muted-foreground">PDF, JPG, PNG • Maks 25 MB</span>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base font-bold text-slate-900">Cetak Dokumen Baru</h2>
+        <span className="text-xs text-slate-400">PDF / Gambar • Maks 25 MB</span>
       </div>
 
       {errorMsg && (
         <div
           role="alert"
-          className="mb-4 p-3.5 bg-red-50 border border-red-200 text-destructive text-sm rounded-xl flex items-center gap-2.5"
+          className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium rounded-xl flex items-center gap-2"
         >
           <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           <span>{errorMsg}</span>
@@ -103,19 +98,19 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
       {successMsg && (
         <div
           role="status"
-          className="mb-4 p-3.5 bg-primary-soft/60 border border-border text-foreground text-sm rounded-xl flex items-center gap-2.5"
+          className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium rounded-xl flex items-center gap-2"
         >
-          <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" aria-hidden="true" />
           <span>{successMsg}</span>
         </div>
       )}
 
-      {/* File Dropzone */}
+      {/* Clean File Dropzone */}
       <div className="mb-5">
-        <label htmlFor="file-upload-input" className="block text-sm font-semibold text-foreground mb-2">
+        <label className="sr-only" htmlFor="file-upload-input">
           Pilih Berkas (PDF / Gambar)
         </label>
-        <div className="border-2 border-dashed border-teal-200 hover:border-primary rounded-2xl p-6 text-center cursor-pointer transition-colors relative bg-background/60 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
+        <div className="border-2 border-dashed border-slate-200 hover:border-teal-500 hover:bg-slate-50/70 rounded-xl p-5 text-center cursor-pointer transition-all relative bg-slate-50/40">
           <input
             id="file-upload-input"
             type="file"
@@ -124,106 +119,121 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           {file ? (
-            <div className="flex items-center justify-center gap-2 text-primary font-semibold text-sm">
+            <div className="flex items-center justify-center gap-2 text-teal-700 font-semibold text-sm py-1">
               <FileText className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-              <span className="truncate max-w-md">{file.name}</span>
-              <span className="text-xs font-mono text-muted-foreground">
+              <span className="truncate max-w-xs sm:max-w-md">{file.name}</span>
+              <span className="text-xs font-mono text-slate-400">
                 ({(file.size / 1024).toFixed(0)} KB)
               </span>
             </div>
           ) : (
-            <div>
-              <Upload className="w-8 h-8 text-primary/70 mx-auto mb-2" aria-hidden="true" />
-              <p className="text-sm font-semibold text-foreground">
-                Ketuk untuk memilih berkas atau tarik ke kotak ini
+            <div className="py-1">
+              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center mx-auto mb-2 text-slate-600">
+                <Upload className="w-4 h-4" aria-hidden="true" />
+              </div>
+              <p className="text-sm font-semibold text-slate-700">
+                Ketuk untuk pilih file PDF atau Foto
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Jumlah halaman dihitung otomatis sebelum kuota dipotong
+              <p className="text-xs text-slate-400 mt-0.5">
+                Jumlah halaman dihitung otomatis oleh sistem
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Print Options Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-        <div>
-          <label htmlFor="copies-input" className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
+      {/* Modern Touch-Friendly Options */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        {/* Stepper Jumlah Rangkap */}
+        <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex flex-col justify-between">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">
             Jumlah Rangkap
-          </label>
-          <input
-            id="copies-input"
-            type="number"
-            min="1"
-            max="10"
-            value={copies}
-            onChange={(e) => setCopies(Math.max(1, parseInt(e.target.value, 10) || 1))}
-            className="w-full min-h-[44px] px-3.5 py-2 bg-white border border-slate-200 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-sm font-mono tabular-nums"
-          />
+          </span>
+          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-1">
+            <button
+              type="button"
+              onClick={() => setCopies(Math.max(1, copies - 1))}
+              className="w-8 h-8 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-600 cursor-pointer"
+              aria-label="Kurangi rangkap"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <span className="text-sm font-bold font-mono text-slate-900 tabular-nums">
+              {copies}x
+            </span>
+            <button
+              type="button"
+              onClick={() => setCopies(Math.min(10, copies + 1))}
+              className="w-8 h-8 rounded-md hover:bg-slate-100 flex items-center justify-center text-slate-600 cursor-pointer"
+              aria-label="Tambah rangkap"
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="color-select" className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
+        {/* Mode Warna */}
+        <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex flex-col justify-between">
+          <label htmlFor="color-select" className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">
             Mode Warna
           </label>
           <select
             id="color-select"
             value={isColor ? 'color' : 'bw'}
             onChange={(e) => setIsColor(e.target.value === 'color')}
-            className="w-full min-h-[44px] px-3.5 py-2 bg-white border border-slate-200 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-sm cursor-pointer"
+            className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
           >
-            <option value="bw">Hitam-Putih (Grayscale)</option>
+            <option value="bw">Hitam-Putih (B&W)</option>
             <option value="color">Berwarna (Color)</option>
           </select>
         </div>
 
-        <div>
-          <label htmlFor="duplex-select" className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
-            Sisi Cetak
+        {/* Sisi Cetak */}
+        <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3 flex flex-col justify-between">
+          <label htmlFor="duplex-select" className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-2">
+            Sisi Kertas
           </label>
           <select
             id="duplex-select"
             value={isDuplex ? 'duplex' : 'single'}
             onChange={(e) => setIsDuplex(e.target.value === 'duplex')}
-            className="w-full min-h-[44px] px-3.5 py-2 bg-white border border-slate-200 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary text-sm cursor-pointer"
+            className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
           >
-            <option value="single">1 Sisi (Single)</option>
-            <option value="duplex">Bolak-balik (Hemat Kuota 50%)</option>
+            <option value="single">1 Sisi (Biasa)</option>
+            <option value="duplex">Bolak-balik (Hemat 50%)</option>
           </select>
         </div>
       </div>
 
-      {/* Confidential Hold-and-Release Checkbox */}
-      <div className="mb-6 bg-accent-soft/70 border border-orange-200 rounded-xl p-4">
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isLocked}
-            onChange={(e) => setIsLocked(e.target.checked)}
-            className="mt-0.5 w-5 h-5 text-accent rounded border-orange-300 focus:ring-accent cursor-pointer"
-          />
-          <div>
-            <span className="text-sm font-bold text-orange-950 flex items-center gap-1.5">
-              <Lock className="w-4 h-4 text-accent" aria-hidden="true" />
-              Kunci Dokumen (Berkas Rahasia / Soal Ujian)
-            </span>
-            <p className="text-xs text-orange-900/80 mt-1 leading-relaxed">
-              Dokumen ditahan di server dan tidak langsung keluar di printer TU. Dokumen baru dicetak dengan prioritas utama saat Anda menekan tombol <strong>&ldquo;Rilis Sekarang&rdquo;</strong> di depan printer.
-            </p>
-          </div>
-        </label>
-      </div>
+      {/* Simple Confidential Toggle */}
+      <label className="flex items-start gap-3 p-3.5 mb-5 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50/50 cursor-pointer transition-colors">
+        <input
+          type="checkbox"
+          checked={isLocked}
+          onChange={(e) => setIsLocked(e.target.checked)}
+          className="mt-0.5 w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500 cursor-pointer"
+        />
+        <div className="text-xs">
+          <span className="font-semibold text-slate-800 flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
+            Kunci Dokumen (Khusus Soal Ujian / Rahasia)
+          </span>
+          <p className="text-slate-500 mt-0.5 leading-relaxed">
+            Kertas baru akan keluar saat Anda menekan tombol <strong>Rilis Sekarang</strong> di depan printer TU.
+          </p>
+        </div>
+      </label>
 
       {/* Submit Button */}
       <button
         type="submit"
         disabled={isUploading || remainingQuota <= 0}
-        className="w-full min-h-[48px] py-3 px-5 bg-primary hover:bg-primary-hover disabled:bg-slate-300 text-primary-foreground font-semibold rounded-xl transition-colors duration-200 shadow-sm text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        className="w-full h-11 px-5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold rounded-xl transition-all text-sm cursor-pointer shadow-sm"
       >
         {isUploading
-          ? 'Sedang Mengunggah & Menghitung Lembar...'
+          ? 'Memproses Dokumen...'
           : remainingQuota <= 0
-          ? 'Kuota Harian Anda Sudah Habis'
+          ? 'Kuota Harian Sudah Habis'
           : 'Kirim ke Antrean Cetak'}
       </button>
     </form>
