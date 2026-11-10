@@ -2,17 +2,27 @@
  * Custom Production/Dev Server for aaPanel (Next.js + Socket.io Real-Time Hub)
  * Startup file for aaPanel Node Project / PM2 Manager: `server.js`
  */
+const fs = require('fs');
+const path = require('path');
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 const { Server: SocketIOServer } = require('socket.io');
 const { PrismaClient } = require('@prisma/client');
 
-const dev = process.env.NODE_ENV !== 'production';
+// Ensure working directory is always the project root even when launched by aaPanel daemon
+process.chdir(__dirname);
+
+const hasProductionBuild = fs.existsSync(path.join(__dirname, '.next', 'BUILD_ID'));
+const dev = process.env.NODE_ENV === 'development' ? true : !hasProductionBuild;
+if (!dev) {
+  process.env.NODE_ENV = 'production';
+}
+
 const hostname = process.env.HOSTNAME || '0.0.0.0';
 const port = parseInt(process.env.PORT || '3003', 10);
 
-const app = next({ dev, hostname, port });
+const app = next({ dev, dir: __dirname, hostname, port });
 const handle = app.getRequestHandler();
 const prisma = new PrismaClient();
 
@@ -99,6 +109,6 @@ app.prepare().then(() => {
   });
 
   httpServer.listen(port, hostname, () => {
-    console.log(`> School Cloud Print Server siap di http://${hostname}:${port}`);
+    console.log(`> School Cloud Print Server (${dev ? 'dev' : 'production'}) siap di http://${hostname}:${port}`);
   });
 });
