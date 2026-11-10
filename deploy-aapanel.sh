@@ -10,7 +10,8 @@ if [ ! -f .env ]; then
   cp .env.example .env
 fi
 
-echo "[2/5] Menginstal dependensi Node.js..."
+echo "[2/5] Menginstal dependensi Node.js untuk platform Linux..."
+rm -f package-lock.json
 npm install
 
 echo "[3/5] Menyiapkan database SQLite & Prisma Client..."
