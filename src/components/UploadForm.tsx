@@ -110,7 +110,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
         <label className="sr-only" htmlFor="file-upload-input">
           Pilih Berkas (PDF / Gambar)
         </label>
-        <div className="border-2 border-dashed border-slate-300 hover:border-teal-600 hover:bg-teal-50/20 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all relative bg-slate-50/60">
+        <div className="border-2 border-dashed border-slate-300 hover:border-emerald-600 hover:bg-emerald-50/30 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all relative bg-slate-50/60">
           <input
             id="file-upload-input"
             type="file"
@@ -119,8 +119,8 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           {file ? (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-teal-800 font-bold text-base py-2">
-              <FileText className="w-7 h-7 text-teal-600 flex-shrink-0" aria-hidden="true" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-emerald-800 font-bold text-base py-2">
+              <FileText className="w-7 h-7 text-emerald-600 flex-shrink-0" aria-hidden="true" />
               <span className="truncate max-w-xs sm:max-w-md">{file.name}</span>
               <span className="text-sm font-mono text-slate-500">
                 ({(file.size / (1024 * 1024)).toFixed(2)} MB)
@@ -128,7 +128,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
             </div>
           ) : (
             <div className="py-2">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center mx-auto mb-3 text-teal-600">
+              <div className="w-14 h-14 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center mx-auto mb-3 text-emerald-600">
                 <Upload className="w-7 h-7" aria-hidden="true" />
               </div>
               <p className="text-base sm:text-lg font-bold text-slate-800">
@@ -189,7 +189,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
               type="button"
               onClick={() => setIsColor(true)}
               className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                isColor ? 'bg-white text-teal-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                isColor ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Warna
@@ -216,7 +216,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
               type="button"
               onClick={() => setIsDuplex(true)}
               className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                isDuplex ? 'bg-white text-teal-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                isDuplex ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Bolak-balik
@@ -246,7 +246,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
             onChange={(e) => setIsLocked(e.target.checked)}
             className="sr-only peer"
           />
-          <div className="w-12 h-7 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-teal-600"></div>
+          <div className="w-12 h-7 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-600"></div>
         </label>
       </div>
 
@@ -254,7 +254,7 @@ export default function UploadForm({ remainingQuota, onUploadSuccess }: UploadFo
       <button
         type="submit"
         disabled={!file || isUploading || remainingQuota <= 0}
-        className="w-full h-14 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white text-base font-bold rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3 cursor-pointer disabled:cursor-not-allowed"
+        className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-200 disabled:text-slate-400 text-white text-base font-bold rounded-2xl transition-all shadow-md hover:shadow-lg hover:shadow-emerald-950/20 flex items-center justify-center gap-3 cursor-pointer disabled:cursor-not-allowed"
       >
         <Upload className="w-5 h-5" />
         <span>

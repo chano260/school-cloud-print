@@ -11,8 +11,8 @@ interface QuotaCardProps {
 export default function QuotaCard({ dailyLimit, usedToday, remaining }: QuotaCardProps) {
   const percentage = Math.min(100, Math.round((usedToday / (dailyLimit || 1)) * 100));
 
-  let barColor = 'bg-teal-600';
-  let badgeColor = 'bg-teal-50 border-teal-200 text-teal-800';
+  let barColor = 'bg-emerald-600';
+  let badgeColor = 'bg-emerald-50 border-emerald-200 text-emerald-800';
   if (percentage >= 90) {
     barColor = 'bg-rose-500';
     badgeColor = 'bg-rose-50 border-rose-200 text-rose-800';

@@ -151,7 +151,7 @@ export default function WhitelistManager() {
     >
       <div className="mb-5">
         <h3 className="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
-          <Users className="w-5 h-5 text-teal-600" aria-hidden="true" />
+          <Users className="w-5 h-5 text-emerald-600" aria-hidden="true" />
           <span>Daftar Guru & Edit Kuota Harian</span>
         </h3>
         <p className="text-sm text-slate-500 mt-1">
@@ -187,7 +187,7 @@ export default function WhitelistManager() {
           placeholder="Ketik Nama Lengkap Guru (contoh: Dra. Siti Rahma)"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
-          className="flex-1 h-12 px-4 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-base focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="flex-1 h-12 px-4 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <div className="flex items-center gap-2.5">
           <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl px-3.5 h-12">
@@ -204,7 +204,7 @@ export default function WhitelistManager() {
           </div>
           <button
             type="submit"
-            className="h-12 px-5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer flex-shrink-0 shadow-sm"
+            className="h-12 px-5 bg-emerald-800 hover:bg-emerald-900 text-white text-sm font-bold rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer flex-shrink-0 shadow-sm"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
             <span>Tambah</span>
@@ -215,8 +215,8 @@ export default function WhitelistManager() {
       {/* Upload Excel Box */}
       <form onSubmit={handleUploadExcel} className="flex flex-col sm:flex-row items-center gap-3 mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200">
         <label className="w-full sm:flex-1 cursor-pointer">
-          <div className="h-11 flex items-center gap-2.5 px-4 rounded-xl bg-white border border-slate-200 hover:border-teal-600 transition-colors text-sm text-slate-700">
-            <Upload className="w-4 h-4 text-teal-600" aria-hidden="true" />
+          <div className="h-11 flex items-center gap-2.5 px-4 rounded-xl bg-white border border-slate-200 hover:border-emerald-600 transition-colors text-sm text-slate-700">
+            <Upload className="w-4 h-4 text-emerald-600" aria-hidden="true" />
             <span className="truncate">
               {file ? file.name : 'Atau impor banyak sekaligus dari Excel (.xlsx / .csv)'}
             </span>
@@ -232,7 +232,7 @@ export default function WhitelistManager() {
         <button
           type="submit"
           disabled={!file || uploading}
-          className="w-full sm:w-auto h-11 px-5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-colors cursor-pointer"
+          className="w-full sm:w-auto h-11 px-5 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-colors cursor-pointer"
         >
           {uploading ? 'Mengimpor...' : 'Impor Excel'}
         </button>
@@ -269,7 +269,7 @@ export default function WhitelistManager() {
                             autoFocus
                             value={editQuotaVal}
                             onChange={(e) => setEditQuotaVal(parseInt(e.target.value, 10) || 1)}
-                            className="w-20 h-10 px-3 border-2 border-teal-600 rounded-xl text-base font-mono font-bold text-slate-900 bg-white focus:outline-none"
+                            className="w-20 h-10 px-3 border-2 border-emerald-600 rounded-xl text-base font-mono font-bold text-slate-900 bg-white focus:outline-none"
                           />
                           <span className="text-sm font-semibold text-slate-600">lembar</span>
                           <button
@@ -277,7 +277,7 @@ export default function WhitelistManager() {
                             onClick={() => saveEditQuota(emp)}
                             disabled={savingEdit}
                             title="Simpan Perubahan"
-                            className="w-9 h-9 rounded-xl bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center cursor-pointer transition-colors shadow-xs"
+                            className="w-9 h-9 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white flex items-center justify-center cursor-pointer transition-colors shadow-xs"
                           >
                             <Check className="w-4 h-4 stroke-[3]" />
                           </button>
@@ -299,7 +299,7 @@ export default function WhitelistManager() {
                             type="button"
                             onClick={() => startEditQuota(emp)}
                             title="Edit Jatah Kuota Guru Ini"
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-teal-700 hover:bg-teal-50 cursor-pointer transition-colors"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 cursor-pointer transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>

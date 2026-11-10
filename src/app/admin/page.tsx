@@ -139,8 +139,8 @@ export default function AdminDashboardPage() {
         <div className="max-w-md mx-auto w-full pt-10 sm:pt-20">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-7 sm:p-9">
             <div className="text-center mb-7">
-              <div className="w-16 h-16 rounded-3xl bg-slate-900 text-white mx-auto flex items-center justify-center mb-4 shadow-lg">
-                <Lock className="w-7 h-7 text-teal-400" />
+              <div className="w-16 h-16 rounded-3xl bg-emerald-900 text-white mx-auto flex items-center justify-center mb-4 shadow-lg">
+                <Lock className="w-7 h-7 text-emerald-400" />
               </div>
               <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Akses Terbatas: Admin TU
@@ -170,7 +170,7 @@ export default function AdminDashboardPage() {
                     placeholder="PIN Admin (default: 123456)"
                     value={pinInput}
                     onChange={(e) => setPinInput(e.target.value)}
-                    className="w-full h-14 pl-12 pr-4 rounded-2xl bg-slate-50 border border-slate-300 text-base focus:outline-none focus:ring-3 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white tracking-widest font-mono font-bold"
+                    className="w-full h-14 pl-12 pr-4 rounded-2xl bg-slate-50 border border-slate-300 text-base focus:outline-none focus:ring-3 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white tracking-widest font-mono font-bold"
                   />
                 </div>
                 <p className="text-xs text-slate-400 mt-2">
@@ -181,7 +181,7 @@ export default function AdminDashboardPage() {
               <button
                 type="submit"
                 disabled={submittingPin || !pinInput}
-                className="w-full h-14 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold uppercase tracking-wider rounded-2xl transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+                className="w-full h-14 bg-emerald-800 hover:bg-emerald-900 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold uppercase tracking-wider rounded-2xl transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
               >
                 {submittingPin ? 'Memverifikasi...' : 'Buka Panel Admin TU'}
               </button>

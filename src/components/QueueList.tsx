@@ -53,7 +53,7 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
         );
       case 'PRINTING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-teal-50 text-teal-800 border border-teal-200 animate-pulse">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 animate-pulse">
             <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" /> Mencetak...
           </span>
         );
@@ -65,7 +65,7 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
         );
       case 'RELEASED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-teal-50 text-teal-800 border border-teal-300">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
             <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" /> Prioritas Rilis
           </span>
         );

@@ -202,17 +202,17 @@ export default function TeacherHomePage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-slate-100/90 via-slate-50 to-slate-100 text-slate-900 pb-16 flex flex-col justify-between">
         {/* Top Navbar */}
-        <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 shadow-xs">
+        <header className="bg-white/95 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-10 shadow-xs">
           <div className="max-w-xl mx-auto px-5 h-20 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
-                <Printer className="w-5 h-5 text-teal-400" />
+              <div className="w-10 h-10 rounded-2xl bg-emerald-900 text-white flex items-center justify-center shadow-md">
+                <Printer className="w-5 h-5 text-emerald-300" />
               </div>
               <div>
-                <h1 className="font-bold text-base sm:text-lg text-slate-900 leading-tight">
+                <h1 className="font-extrabold text-base sm:text-lg text-slate-900 leading-tight">
                   Cloud Print SMAN 3 Buru
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-500">Epson EcoTank L6460 • Ruang TU</p>
+                <p className="text-xs sm:text-sm text-emerald-700 font-medium">Epson EcoTank L6460 • Ruang TU</p>
               </div>
             </div>
 
@@ -220,9 +220,9 @@ export default function TeacherHomePage() {
               <PrinterBadge />
               <Link
                 href="/admin"
-                className="h-10 px-3.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-sm font-semibold text-slate-700 inline-flex items-center gap-1.5 transition-colors shadow-xs"
+                className="h-10 px-3.5 rounded-xl border border-slate-200 hover:bg-emerald-50/50 hover:border-emerald-200 text-sm font-semibold text-slate-700 inline-flex items-center gap-1.5 transition-colors shadow-xs"
               >
-                <Shield className="w-4 h-4 text-slate-500" />
+                <Shield className="w-4 h-4 text-emerald-700" />
                 <span className="hidden sm:inline">Admin TU</span>
               </Link>
             </div>
@@ -231,12 +231,12 @@ export default function TeacherHomePage() {
 
         {/* Center Login Box */}
         <div className="max-w-xl mx-auto px-4 pt-6 sm:pt-10 w-full">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-6 sm:p-9">
+          <div className="bg-white rounded-3xl border border-emerald-100/90 shadow-xl shadow-emerald-950/5 p-6 sm:p-9">
             <div className="text-center mb-6">
-              <div className="w-16 h-16 rounded-3xl bg-teal-50 border border-teal-200 text-teal-700 mx-auto flex items-center justify-center mb-4 shadow-sm">
+              <div className="w-16 h-16 rounded-3xl bg-emerald-50 border border-emerald-200 text-emerald-700 mx-auto flex items-center justify-center mb-4 shadow-xs">
                 <User className="w-8 h-8" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                 Pilih Nama Guru
               </h2>
               <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-md mx-auto leading-relaxed">
@@ -253,18 +253,18 @@ export default function TeacherHomePage() {
 
             {/* Pencarian Nama Guru */}
             <div className="relative mb-4">
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <Search className="w-5 h-5 text-emerald-600/60 absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Ketik nama Anda di sini..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-slate-50 border border-slate-300 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition-all font-medium"
+                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-emerald-50/30 border border-slate-300 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white transition-all font-medium"
               />
             </div>
 
             {/* List Pilihan Guru */}
-            <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-slate-50/60 mb-6">
+            <div className="max-h-72 overflow-y-auto divide-y divide-emerald-100/60 rounded-2xl border border-slate-200 bg-emerald-50/20 mb-6">
               {filteredTeachers.length === 0 ? (
                 <div className="p-8 text-center text-slate-500">
                   <p className="text-base font-bold text-slate-700 mb-1">Nama Tidak Ditemukan</p>
@@ -280,7 +280,7 @@ export default function TeacherHomePage() {
                       onClick={() => setSelectedTeacherId(teacher.id)}
                       className={`w-full px-5 py-4 text-left flex items-center justify-between transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-teal-50/90 text-teal-950 font-bold ring-2 ring-inset ring-teal-600'
+                          ? 'bg-emerald-100/70 text-emerald-950 font-bold ring-2 ring-inset ring-emerald-600'
                           : 'hover:bg-white text-slate-800'
                       }`}
                     >
@@ -288,8 +288,8 @@ export default function TeacherHomePage() {
                         <div
                           className={`w-10 h-10 rounded-2xl flex items-center justify-center text-base font-extrabold shadow-xs ${
                             isSelected
-                              ? 'bg-teal-600 text-white'
-                              : 'bg-slate-200 text-slate-700'
+                              ? 'bg-emerald-700 text-white'
+                              : 'bg-emerald-100/70 text-emerald-800'
                           }`}
                         >
                           {teacher.name.charAt(0).toUpperCase()}
@@ -298,11 +298,11 @@ export default function TeacherHomePage() {
                       </div>
 
                       <div className="flex items-center gap-2.5 flex-shrink-0">
-                        <span className="text-xs sm:text-sm font-semibold px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-600 font-mono">
+                        <span className="text-xs sm:text-sm font-semibold px-3 py-1 rounded-xl bg-white border border-emerald-200 text-emerald-800 font-mono">
                           {teacher.dailyQuotaOverride || 20} lbr / hari
                         </span>
                         {isSelected && (
-                          <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-sm">
+                          <div className="w-6 h-6 rounded-full bg-emerald-700 text-white flex items-center justify-center shadow-xs">
                             <Check className="w-4 h-4 stroke-[3]" />
                           </div>
                         )}
@@ -318,7 +318,7 @@ export default function TeacherHomePage() {
               type="button"
               onClick={handleLoginAsTeacher}
               disabled={!selectedTeacherId || loggingIn}
-              className="w-full h-14 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-base font-bold rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer disabled:cursor-not-allowed"
+              className="w-full h-14 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-200 disabled:text-slate-400 text-white text-base font-bold rounded-2xl transition-all shadow-md hover:shadow-lg hover:shadow-emerald-900/20 flex items-center justify-center gap-2.5 cursor-pointer disabled:cursor-not-allowed"
             >
               <span>{loggingIn ? 'Sedang Membuka Dashboard...' : 'Masuk ke Dashboard Cetak'}</span>
               <ArrowRight className="w-5 h-5" />
@@ -359,17 +359,17 @@ export default function TeacherHomePage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900 pb-20">
       {/* Top Navbar */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-xs">
+      <header className="bg-white/95 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-20 shadow-xs">
         <div className="max-w-2xl mx-auto px-4 h-20 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
-              <Printer className="w-5 h-5 text-teal-400" aria-hidden="true" />
+            <div className="w-10 h-10 rounded-2xl bg-emerald-900 text-white flex items-center justify-center shadow-md">
+              <Printer className="w-5 h-5 text-emerald-300" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="font-bold text-base sm:text-lg text-slate-900 leading-tight">
+              <h1 className="font-extrabold text-base sm:text-lg text-slate-900 leading-tight">
                 Cloud Print SMAN 3 Buru
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500">Epson EcoTank L6460 • Ruang TU</p>
+              <p className="text-xs sm:text-sm text-emerald-700 font-medium">Epson EcoTank L6460 • Ruang TU</p>
             </div>
           </div>
 
@@ -405,13 +405,13 @@ export default function TeacherHomePage() {
       {/* Main Content Container */}
       <div className="max-w-2xl mx-auto px-4 pt-6 space-y-6">
         {/* Guru Banner Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-5 sm:p-6 flex items-center justify-between gap-4">
+        <div className="bg-white rounded-3xl border border-emerald-100/90 shadow-md shadow-emerald-950/5 p-5 sm:p-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-extrabold text-xl flex-shrink-0 shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-700 text-white flex items-center justify-center font-extrabold text-xl flex-shrink-0 shadow-sm">
               {currentUser.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-teal-700 uppercase tracking-wider mb-0.5">
+              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-0.5">
                 Akun Guru Aktif
               </p>
               <p className="text-lg sm:text-xl font-extrabold text-slate-900 truncate">
@@ -423,7 +423,7 @@ export default function TeacherHomePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 inline-flex items-center gap-2 transition-colors cursor-pointer flex-shrink-0"
+            className="h-11 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-sm font-bold text-emerald-800 border border-emerald-200 inline-flex items-center gap-2 transition-colors cursor-pointer flex-shrink-0"
           >
             <span>Ganti Guru</span>
           </button>
