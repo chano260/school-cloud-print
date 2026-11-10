@@ -47,38 +47,38 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
     switch (job.status) {
       case 'QUEUED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
-            <Clock className="w-3 h-3" aria-hidden="true" /> Antre
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 border border-slate-200">
+            <Clock className="w-3.5 h-3.5" aria-hidden="true" /> Antre
           </span>
         );
       case 'PRINTING':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 animate-pulse">
-            <Play className="w-3 h-3" aria-hidden="true" /> Mencetak...
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-teal-50 text-teal-800 border border-teal-200 animate-pulse">
+            <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" /> Mencetak...
           </span>
         );
       case 'LOCKED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
-            <Lock className="w-3 h-3" aria-hidden="true" /> Terkunci
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-amber-50 text-amber-900 border border-amber-300">
+            <Lock className="w-3.5 h-3.5" aria-hidden="true" /> Terkunci
           </span>
         );
       case 'RELEASED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-            <Play className="w-3 h-3" aria-hidden="true" /> Prioritas
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-teal-50 text-teal-800 border border-teal-300">
+            <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" /> Prioritas Rilis
           </span>
         );
       case 'COMPLETED':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">
-            <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> Selesai
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> Selesai
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-rose-50 text-rose-700">
-            <AlertTriangle className="w-3 h-3" aria-hidden="true" /> {job.status}
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-bold bg-rose-50 text-rose-800 border border-rose-200">
+            <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" /> {job.status}
           </span>
         );
     }
@@ -87,50 +87,50 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
   return (
     <section
       aria-label="Daftar Antrean Cetak"
-      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6"
+      className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8"
     >
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-bold text-slate-900">Antrean Cetak Hari Ini</h2>
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-extrabold text-slate-900">Antrean Cetak Hari Ini</h2>
         <button
           type="button"
           onClick={onRefresh}
-          className="h-8 px-2.5 rounded-lg hover:bg-slate-100 text-xs text-slate-500 hover:text-slate-800 font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+          className="h-10 px-3.5 rounded-xl hover:bg-slate-100 text-sm text-slate-600 hover:text-slate-900 font-bold inline-flex items-center gap-2 cursor-pointer transition-colors border border-slate-200"
         >
-          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-          Segarkan
+          <RefreshCw className="w-4 h-4" aria-hidden="true" />
+          <span>Segarkan</span>
         </button>
       </div>
 
       {jobs.length === 0 ? (
-        <div className="text-center py-8 text-slate-400">
-          <FileText className="w-8 h-8 mx-auto mb-2 opacity-40" aria-hidden="true" />
-          <p className="text-xs">Belum ada dokumen di antrean.</p>
+        <div className="text-center py-10 text-slate-500">
+          <FileText className="w-10 h-10 mx-auto mb-3 text-slate-300" aria-hidden="true" />
+          <p className="text-base font-semibold text-slate-600">Belum ada dokumen dalam antrean hari ini.</p>
         </div>
       ) : (
         <div className="divide-y divide-slate-100">
           {jobs.map((job, idx) => (
             <div
               key={job.id}
-              className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"
+              className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-semibold font-mono tabular-nums flex-shrink-0 mt-0.5">
+              <div className="flex items-start gap-3.5">
+                <span className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-extrabold font-mono tabular-nums flex-shrink-0 mt-0.5 border border-slate-200">
                   {idx + 1}
                 </span>
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-800 truncate max-w-xs sm:max-w-md">
+                  <h3 className="text-base font-bold text-slate-900 truncate max-w-xs sm:max-w-md">
                     {job.fileName}
                   </h3>
-                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 mt-0.5">
+                  <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-500 mt-1 font-medium">
                     {job.user?.name && (
                       <>
-                        <span className="font-medium text-slate-600">{job.user.name}</span>
+                        <span className="font-bold text-slate-700">{job.user.name}</span>
                         <span>•</span>
                       </>
                     )}
-                    <span className="font-mono text-slate-600">{job.physicalSheets} lbr</span>
+                    <span className="font-mono font-bold text-slate-800">{job.physicalSheets} lbr</span>
                     <span>•</span>
-                    <span>{job.copies}x</span>
+                    <span>{job.copies}x rangkap</span>
                     <span>•</span>
                     <span>{job.isColor ? 'Warna' : 'B&W'}</span>
                     <span>•</span>
@@ -139,7 +139,7 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 self-end sm:self-center">
+              <div className="flex items-center gap-2.5 self-end sm:self-center">
                 {getStatusBadge(job)}
 
                 {job.status === 'LOCKED' &&
@@ -148,10 +148,10 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
                       type="button"
                       onClick={() => handleRelease(job.id)}
                       disabled={releasingId === job.id}
-                      className="h-8 px-3 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+                      className="h-10 px-4 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer"
                     >
-                      <Play className="w-3 h-3 fill-current" aria-hidden="true" />
-                      {releasingId === job.id ? 'Merilis...' : 'Rilis Sekarang'}
+                      <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
+                      <span>{releasingId === job.id ? 'Merilis...' : 'Rilis Sekarang'}</span>
                     </button>
                   )}
               </div>

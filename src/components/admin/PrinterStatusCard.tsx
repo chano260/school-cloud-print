@@ -45,35 +45,37 @@ export default function PrinterStatusCard({ status, ink }: PrinterStatusCardProp
   return (
     <section
       aria-label="Status Perangkat Keras Printer"
-      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 mb-5"
+      className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <p className="text-xs font-medium text-slate-400">Status Perangkat Keras</p>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900">
+          <p className="text-xs font-bold text-teal-700 uppercase tracking-wider mb-1">
+            Status Perangkat Keras
+          </p>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
             Epson EcoTank L6460 • Ruang TU
           </h2>
         </div>
 
         <div>
           {status === 'READY' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" /> Siap Mencetak
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs">
+              <CheckCircle className="w-4 h-4 text-emerald-600" aria-hidden="true" /> Siap Mencetak
             </span>
           )}
           {status === 'PRINTING' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 animate-pulse">
-              <Layers className="w-3.5 h-3.5" aria-hidden="true" /> Sedang Mencetak
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-teal-50 text-teal-800 border border-teal-200 animate-pulse shadow-xs">
+              <Layers className="w-4 h-4 text-teal-600" aria-hidden="true" /> Sedang Mencetak
             </span>
           )}
           {status === 'OUT_OF_PAPER' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-              <FileWarning className="w-3.5 h-3.5" aria-hidden="true" /> Kertas Habis
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-rose-50 text-rose-800 border border-rose-200 shadow-xs">
+              <FileWarning className="w-4 h-4 text-rose-600" aria-hidden="true" /> Kertas Habis
             </span>
           )}
           {status === 'OFFLINE' && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
-              <WifiOff className="w-3.5 h-3.5" aria-hidden="true" /> Agent Offline
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold bg-slate-100 text-slate-700 border border-slate-200 shadow-xs">
+              <WifiOff className="w-4 h-4 text-slate-500" aria-hidden="true" /> Agent Offline
             </span>
           )}
         </div>
@@ -82,26 +84,26 @@ export default function PrinterStatusCard({ status, ink }: PrinterStatusCardProp
       {warnings.length > 0 && (
         <div
           role="alert"
-          className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs flex items-start gap-2"
+          className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-sm flex items-start gap-3"
         >
-          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-          <div>
-            <span className="font-semibold">Perhatian:</span> {warnings.join(', ')}.
+          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="leading-relaxed">
+            <span className="font-bold">Perhatian:</span> {warnings.join(', ')}.
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
         {gauges.map((g) => (
           <div
             key={g.label}
-            className="bg-slate-50/80 p-3 rounded-xl border border-slate-200/60 last:col-span-2 sm:last:col-span-1"
+            className="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 last:col-span-2 sm:last:col-span-1 shadow-xs"
           >
-            <div className="flex justify-between items-center text-xs font-medium mb-1.5 text-slate-700">
+            <div className="flex justify-between items-center text-xs sm:text-sm font-bold mb-2 text-slate-700">
               <span>{g.label}</span>
-              <span className="font-mono tabular-nums font-bold text-slate-900">{g.value}%</span>
+              <span className="font-mono tabular-nums font-black text-slate-900 text-sm sm:text-base">{g.value}%</span>
             </div>
-            <div className="w-full bg-slate-200/80 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
               <div
                 className={`${g.barClass} h-full rounded-full transition-all duration-300`}
                 style={{ width: `${g.value}%` }}

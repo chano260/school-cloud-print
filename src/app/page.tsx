@@ -13,8 +13,8 @@ import {
   User,
   LogOut,
   ArrowRight,
-  Sparkles,
   Info,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -103,7 +103,6 @@ export default function TeacherHomePage() {
     fetchDashboardData();
   }, []);
 
-  // Poll printer telemetry & queue when dashboard is active
   useEffect(() => {
     if (!currentUser) return;
     const interval = setInterval(fetchDashboardData, 6000);
@@ -119,7 +118,7 @@ export default function TeacherHomePage() {
   const handleLoginAsTeacher = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!selectedTeacherId) {
-      setLoginError('Silakan pilih salah satu nama guru di bawah terlebih dahulu.');
+      setLoginError('Silakan ketuk salah satu nama guru di bawah terlebih dahulu.');
       return;
     }
 
@@ -158,13 +157,12 @@ export default function TeacherHomePage() {
     }
   };
 
-  // Status Indicator Badge Component
   const PrinterBadge = () => (
-    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200/80">
+    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200">
       <span
-        className={`w-2 h-2 rounded-full ${
+        className={`w-2.5 h-2.5 rounded-full ${
           printerStatus === 'READY'
-            ? 'bg-emerald-500'
+            ? 'bg-emerald-500 shadow-sm'
             : printerStatus === 'PRINTING'
             ? 'bg-teal-600 animate-pulse'
             : printerStatus === 'OUT_OF_PAPER'
@@ -172,26 +170,26 @@ export default function TeacherHomePage() {
             : 'bg-slate-400'
         }`}
       />
-      <span className="text-xs font-medium text-slate-700">
+      <span className="text-sm font-semibold text-slate-700">
         {printerStatus === 'READY'
-          ? 'Siap'
+          ? 'Printer Siap'
           : printerStatus === 'PRINTING'
-          ? 'Mencetak'
+          ? 'Sedang Mencetak'
           : printerStatus === 'OUT_OF_PAPER'
           ? 'Kertas Habis'
-          : 'Offline'}
+          : 'Printer Offline'}
       </span>
     </div>
   );
 
   if (authLoading) {
     return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center animate-spin">
-            <Printer className="w-5 h-5" />
+      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center animate-spin shadow-md">
+            <Printer className="w-6 h-6" />
           </div>
-          <p className="text-xs font-medium text-slate-500">Memuat Cloud Print SMAN 3 Buru...</p>
+          <p className="text-base font-medium text-slate-600">Memuat Portal Cloud Print SMAN 3 Buru...</p>
         </div>
       </main>
     );
@@ -202,29 +200,29 @@ export default function TeacherHomePage() {
   // ==========================================
   if (!currentUser) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-100/80 to-slate-50 text-slate-900 pb-12 flex flex-col justify-between">
-        {/* Simple Navbar */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-10">
-          <div className="max-w-xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shadow-sm">
-                <Printer className="w-4 h-4" />
+      <main className="min-h-screen bg-gradient-to-b from-slate-100/90 via-slate-50 to-slate-100 text-slate-900 pb-16 flex flex-col justify-between">
+        {/* Top Navbar */}
+        <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10 shadow-xs">
+          <div className="max-w-xl mx-auto px-5 h-20 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
+                <Printer className="w-5 h-5 text-teal-400" />
               </div>
               <div>
-                <h1 className="font-bold text-xs sm:text-sm text-slate-900 leading-tight">
+                <h1 className="font-bold text-base sm:text-lg text-slate-900 leading-tight">
                   Cloud Print SMAN 3 Buru
                 </h1>
-                <p className="text-[11px] text-slate-400">Epson EcoTank L6460 • Ruang TU</p>
+                <p className="text-xs sm:text-sm text-slate-500">Epson EcoTank L6460 • Ruang TU</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <PrinterBadge />
               <Link
                 href="/admin"
-                className="h-8 px-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-xs font-medium text-slate-600 inline-flex items-center gap-1.5 transition-colors"
+                className="h-10 px-3.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-sm font-semibold text-slate-700 inline-flex items-center gap-1.5 transition-colors shadow-xs"
               >
-                <Shield className="w-3.5 h-3.5 text-slate-500" />
+                <Shield className="w-4 h-4 text-slate-500" />
                 <span className="hidden sm:inline">Admin TU</span>
               </Link>
             </div>
@@ -232,45 +230,45 @@ export default function TeacherHomePage() {
         </header>
 
         {/* Center Login Box */}
-        <div className="max-w-xl mx-auto px-4 pt-6 sm:pt-8 w-full">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-md p-5 sm:p-7">
+        <div className="max-w-xl mx-auto px-4 pt-6 sm:pt-10 w-full">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-6 sm:p-9">
             <div className="text-center mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 text-teal-600 mx-auto flex items-center justify-center mb-3 shadow-inner">
-                <User className="w-6 h-6" />
+              <div className="w-16 h-16 rounded-3xl bg-teal-50 border border-teal-200 text-teal-700 mx-auto flex items-center justify-center mb-4 shadow-sm">
+                <User className="w-8 h-8" />
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                Pilih Nama Guru untuk Masuk
+              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                Pilih Nama Guru
               </h2>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                Cari nama Anda yang telah terdaftar di bawah untuk membuka dashboard cetak dokumen mandiri.
+              <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-md mx-auto leading-relaxed">
+                Cari dan klik nama Bapak/Ibu guru di bawah untuk langsung membuka dashboard cetak mandiri.
               </p>
             </div>
 
             {loginError && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
-                <AlertOctagon className="w-4 h-4 flex-shrink-0" />
+              <div className="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-semibold flex items-center gap-3">
+                <AlertOctagon className="w-5 h-5 flex-shrink-0 text-rose-600" />
                 <span>{loginError}</span>
               </div>
             )}
 
             {/* Pencarian Nama Guru */}
-            <div className="relative mb-3">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <div className="relative mb-4">
+              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Ketik nama Anda untuk mencari..."
+                placeholder="Ketik nama Anda di sini..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 pl-9 pr-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all"
+                className="w-full h-14 pl-12 pr-4 rounded-2xl bg-slate-50 border border-slate-300 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-3 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition-all font-medium"
               />
             </div>
 
             {/* List Pilihan Guru */}
-            <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-200/80 bg-slate-50/50 mb-5">
+            <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-slate-50/60 mb-6">
               {filteredTeachers.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400">
-                  <p className="font-medium text-slate-600 mb-1">Nama tidak ditemukan</p>
-                  <p>Minta petugas Tata Usaha (TU) untuk menambahkan nama Anda ke daftar guru.</p>
+                <div className="p-8 text-center text-slate-500">
+                  <p className="text-base font-bold text-slate-700 mb-1">Nama Tidak Ditemukan</p>
+                  <p className="text-sm">Silakan hubungi staf Tata Usaha (TU) untuk mendaftarkan nama Anda.</p>
                 </div>
               ) : (
                 filteredTeachers.map((teacher) => {
@@ -280,32 +278,32 @@ export default function TeacherHomePage() {
                       key={teacher.id}
                       type="button"
                       onClick={() => setSelectedTeacherId(teacher.id)}
-                      className={`w-full px-4 py-3 text-left flex items-center justify-between text-sm transition-all cursor-pointer ${
+                      className={`w-full px-5 py-4 text-left flex items-center justify-between transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-teal-50 text-teal-900 font-semibold ring-1 ring-inset ring-teal-500'
-                          : 'hover:bg-white text-slate-700'
+                          ? 'bg-teal-50/90 text-teal-950 font-bold ring-2 ring-inset ring-teal-600'
+                          : 'hover:bg-white text-slate-800'
                       }`}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex items-center gap-3.5 min-w-0">
                         <div
-                          className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                          className={`w-10 h-10 rounded-2xl flex items-center justify-center text-base font-extrabold shadow-xs ${
                             isSelected
                               ? 'bg-teal-600 text-white'
-                              : 'bg-slate-200 text-slate-600'
+                              : 'bg-slate-200 text-slate-700'
                           }`}
                         >
                           {teacher.name.charAt(0).toUpperCase()}
                         </div>
-                        <span className="truncate">{teacher.name}</span>
+                        <span className="truncate text-base sm:text-lg">{teacher.name}</span>
                       </div>
 
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200/70 text-slate-500">
-                          Kuota {teacher.dailyQuotaOverride || 20} lbr
+                      <div className="flex items-center gap-2.5 flex-shrink-0">
+                        <span className="text-xs sm:text-sm font-semibold px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-600 font-mono">
+                          {teacher.dailyQuotaOverride || 20} lbr / hari
                         </span>
                         {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-teal-600 text-white flex items-center justify-center">
-                            <Check className="w-3.5 h-3.5" />
+                          <div className="w-6 h-6 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-sm">
+                            <Check className="w-4 h-4 stroke-[3]" />
                           </div>
                         )}
                       </div>
@@ -320,35 +318,35 @@ export default function TeacherHomePage() {
               type="button"
               onClick={handleLoginAsTeacher}
               disabled={!selectedTeacherId || loggingIn}
-              className="w-full h-11 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-semibold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full h-14 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-base font-bold rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer disabled:cursor-not-allowed"
             >
-              <span>{loggingIn ? 'Sedang Masuk...' : 'Masuk ke Dashboard'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{loggingIn ? 'Sedang Membuka Dashboard...' : 'Masuk ke Dashboard Cetak'}</span>
+              <ArrowRight className="w-5 h-5" />
             </button>
 
-            {/* Info Bantuan untuk Guru */}
-            <div className="mt-5 p-3 rounded-xl bg-amber-50/70 border border-amber-200/60 flex items-start gap-2.5 text-xs text-amber-800">
-              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            {/* Info Kemudahan untuk Guru */}
+            <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-start gap-3 text-sm text-amber-900 leading-relaxed">
+              <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
               <p>
-                Bapak/Ibu Guru tidak perlu memasukkan email atau kata sandi. Cukup pilih nama Bapak/Ibu pada daftar di atas untuk langsung mencetak dokumen.
+                <strong>Petunjuk:</strong> Bapak/Ibu Guru tidak perlu mengingat email atau password. Cukup pilih nama di atas, lalu dokumen siap dikirim ke printer Epson TU.
               </p>
             </div>
           </div>
 
           {/* Link ke Admin TU */}
-          <div className="text-center mt-5">
+          <div className="text-center mt-6">
             <Link
               href="/admin"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors py-2 px-4 rounded-xl hover:bg-white border border-transparent hover:border-slate-200"
             >
-              <Shield className="w-3.5 h-3.5 text-slate-400" />
+              <Shield className="w-4 h-4 text-slate-500" />
               <span>Login sebagai Petugas / Admin Tata Usaha (TU)</span>
             </Link>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="text-center text-[11px] text-slate-400 py-4 mt-8 border-t border-slate-200/60">
+        <footer className="text-center text-xs sm:text-sm text-slate-500 py-6 mt-10 border-t border-slate-200">
           SMAN 3 Buru • Sistem Cetak Cloud Mandiri Ruang TU
         </footer>
       </main>
@@ -359,23 +357,23 @@ export default function TeacherHomePage() {
   // VIEW 2: AUTHENTICATED DASHBOARD VIEW
   // ==========================================
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <main className="min-h-screen bg-slate-50 text-slate-900 pb-20">
       {/* Top Navbar */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20">
-        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
-              <Printer className="w-4 h-4" aria-hidden="true" />
+      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-xs">
+        <div className="max-w-2xl mx-auto px-4 h-20 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md">
+              <Printer className="w-5 h-5 text-teal-400" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="font-bold text-xs sm:text-base text-slate-900 leading-tight">
+              <h1 className="font-bold text-base sm:text-lg text-slate-900 leading-tight">
                 Cloud Print SMAN 3 Buru
               </h1>
-              <p className="text-[11px] sm:text-xs text-slate-400">Epson EcoTank L6460 • Ruang TU</p>
+              <p className="text-xs sm:text-sm text-slate-500">Epson EcoTank L6460 • Ruang TU</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <PrinterBadge />
 
             {/* Logout / Switch Account Button */}
@@ -383,9 +381,9 @@ export default function TeacherHomePage() {
               type="button"
               onClick={handleLogout}
               title="Keluar / Ganti Akun Guru"
-              className="h-8 px-2.5 rounded-lg border border-slate-200 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 text-xs font-medium text-slate-600 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="h-10 px-3.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-sm font-bold text-rose-700 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Keluar</span>
             </button>
           </div>
@@ -394,29 +392,29 @@ export default function TeacherHomePage() {
 
       {/* Out of paper emergency banner */}
       {printerStatus === 'OUT_OF_PAPER' && (
-        <div role="alert" className="bg-rose-600 text-white py-2.5 px-4 shadow-sm">
-          <div className="max-w-2xl mx-auto flex items-center gap-2.5">
-            <AlertOctagon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-            <p className="text-xs sm:text-sm font-medium">
-              Kertas printer di ruang TU sedang habis. Antrean dijeda otomatis sampai kertas diisi.
+        <div role="alert" className="bg-rose-600 text-white py-3.5 px-4 shadow-md">
+          <div className="max-w-2xl mx-auto flex items-center gap-3">
+            <AlertOctagon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+            <p className="text-sm sm:text-base font-bold">
+              Kertas printer di ruang TU sedang habis. Antrean dijeda otomatis sampai kertas diisi oleh staf TU.
             </p>
           </div>
         </div>
       )}
 
       {/* Main Content Container */}
-      <div className="max-w-2xl mx-auto px-4 pt-5">
+      <div className="max-w-2xl mx-auto px-4 pt-6 space-y-6">
         {/* Guru Banner Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 mb-5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-full bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-5 sm:p-6 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-extrabold text-xl flex-shrink-0 shadow-sm">
               {currentUser.name.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                Masuk sebagai Guru
+              <p className="text-xs font-bold text-teal-700 uppercase tracking-wider mb-0.5">
+                Akun Guru Aktif
               </p>
-              <p className="text-sm sm:text-base font-bold text-slate-900 truncate">
+              <p className="text-lg sm:text-xl font-extrabold text-slate-900 truncate">
                 {currentUser.name}
               </p>
             </div>
@@ -425,9 +423,9 @@ export default function TeacherHomePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 inline-flex items-center gap-1.5 transition-colors cursor-pointer flex-shrink-0"
+            className="h-11 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-sm font-bold text-slate-700 inline-flex items-center gap-2 transition-colors cursor-pointer flex-shrink-0"
           >
-            <span>Ganti Akun</span>
+            <span>Ganti Guru</span>
           </button>
         </div>
 

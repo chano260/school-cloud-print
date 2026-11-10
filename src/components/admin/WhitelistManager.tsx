@@ -147,31 +147,31 @@ export default function WhitelistManager() {
   return (
     <section
       aria-label="Manajemen Daftar Guru"
-      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 mb-5"
+      className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6"
     >
-      <div className="mb-4">
-        <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-          <Users className="w-4 h-4 text-teal-600" aria-hidden="true" />
-          Daftar Nama Guru & Pengaturan Kuota
+      <div className="mb-5">
+        <h3 className="text-xl font-extrabold text-slate-900 flex items-center gap-2.5">
+          <Users className="w-5 h-5 text-teal-600" aria-hidden="true" />
+          <span>Daftar Guru & Edit Kuota Harian</span>
         </h3>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Admin TU dapat mengubah jatah kuota per guru sewaktu-waktu dan langsung berlaku hari ini.
+        <p className="text-sm text-slate-500 mt-1">
+          Admin TU dapat mengubah jatah kuota per guru sewaktu-waktu dan langsung aktif hari ini.
         </p>
       </div>
 
       {statusMsg && (
         <div
           role="status"
-          className={`mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${
+          className={`mb-5 p-4 rounded-2xl text-sm font-semibold flex items-center gap-3 ${
             statusMsg.type === 'success'
               ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-              : 'bg-rose-50 border border-rose-200 text-rose-700'
+              : 'bg-rose-50 border border-rose-200 text-rose-800'
           }`}
         >
           {statusMsg.type === 'success' ? (
-            <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" aria-hidden="true" />
+            <Check className="w-5 h-5 text-emerald-600 flex-shrink-0" aria-hidden="true" />
           ) : (
-            <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" aria-hidden="true" />
           )}
           <span>{statusMsg.text}</span>
         </div>
@@ -180,42 +180,43 @@ export default function WhitelistManager() {
       {/* Tambah Guru Manual */}
       <form
         onSubmit={handleAddSingle}
-        className="flex flex-col sm:flex-row gap-2.5 mb-4"
+        className="flex flex-col sm:flex-row gap-3 mb-5"
       >
         <input
           type="text"
-          placeholder="Ketik Nama Lengkap Guru (contoh: Budi Santoso, S.Pd)"
+          placeholder="Ketik Nama Lengkap Guru (contoh: Dra. Siti Rahma)"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
-          className="flex-1 h-10 px-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="flex-1 h-12 px-4 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-base focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 h-10">
-            <span className="text-xs text-slate-400">Kuota:</span>
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl px-3.5 h-12">
+            <span className="text-xs font-bold text-slate-500 uppercase">Kuota:</span>
             <input
               type="number"
               min="1"
               max="500"
               value={quotaInput}
               onChange={(e) => setQuotaInput(parseInt(e.target.value, 10) || 20)}
-              className="w-12 bg-transparent text-sm font-mono font-bold text-slate-800 text-center focus:outline-none"
+              className="w-14 bg-transparent text-base font-mono font-bold text-slate-900 text-center focus:outline-none"
             />
+            <span className="text-xs font-medium text-slate-500">lbr</span>
           </div>
           <button
             type="submit"
-            className="h-10 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+            className="h-12 px-5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer flex-shrink-0 shadow-sm"
           >
             <Plus className="w-4 h-4" aria-hidden="true" />
-            Tambah Guru
+            <span>Tambah</span>
           </button>
         </div>
       </form>
 
       {/* Upload Excel Box */}
-      <form onSubmit={handleUploadExcel} className="flex flex-col sm:flex-row items-center gap-2.5 mb-5 p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+      <form onSubmit={handleUploadExcel} className="flex flex-col sm:flex-row items-center gap-3 mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200">
         <label className="w-full sm:flex-1 cursor-pointer">
-          <div className="h-9 flex items-center gap-2 px-3 rounded-lg bg-white border border-slate-200 hover:border-teal-500 transition-colors text-xs text-slate-600">
-            <Upload className="w-3.5 h-3.5 text-teal-600" aria-hidden="true" />
+          <div className="h-11 flex items-center gap-2.5 px-4 rounded-xl bg-white border border-slate-200 hover:border-teal-600 transition-colors text-sm text-slate-700">
+            <Upload className="w-4 h-4 text-teal-600" aria-hidden="true" />
             <span className="truncate">
               {file ? file.name : 'Atau impor banyak sekaligus dari Excel (.xlsx / .csv)'}
             </span>
@@ -231,7 +232,7 @@ export default function WhitelistManager() {
         <button
           type="submit"
           disabled={!file || uploading}
-          className="w-full sm:w-auto h-9 px-4 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+          className="w-full sm:w-auto h-11 px-5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-colors cursor-pointer"
         >
           {uploading ? 'Mengimpor...' : 'Impor Excel'}
         </button>
@@ -239,28 +240,28 @@ export default function WhitelistManager() {
 
       {/* Tabel Daftar Guru */}
       {employees.length > 0 && (
-        <div className="overflow-x-auto border border-slate-200/80 rounded-xl">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+        <div className="overflow-x-auto border border-slate-200 rounded-2xl">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
               <tr>
-                <th className="py-2.5 px-3.5">Nama Guru</th>
-                <th className="py-2.5 px-3.5">Jatah Kuota Harian</th>
-                <th className="py-2.5 px-3.5 text-right">Aksi</th>
+                <th className="py-3.5 px-4">Nama Guru</th>
+                <th className="py-3.5 px-4">Jatah Kuota Harian</th>
+                <th className="py-3.5 px-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {employees.map((emp) => {
                 const isEditing = editingId === emp.id;
                 return (
-                  <tr key={emp.id} className="hover:bg-slate-50/70">
-                    <td className="py-2.5 px-3.5 font-medium text-slate-800">
+                  <tr key={emp.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-slate-900 text-base">
                       {emp.name}
                     </td>
 
                     {/* Kolom Jatah Kuota (dengan Edit Inline) */}
-                    <td className="py-2 px-3.5">
+                    <td className="py-3 px-4">
                       {isEditing ? (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <input
                             type="number"
                             min="1"
@@ -268,52 +269,52 @@ export default function WhitelistManager() {
                             autoFocus
                             value={editQuotaVal}
                             onChange={(e) => setEditQuotaVal(parseInt(e.target.value, 10) || 1)}
-                            className="w-16 h-8 px-2 border border-teal-500 rounded-lg text-xs font-mono font-bold text-slate-900 bg-white focus:outline-none"
+                            className="w-20 h-10 px-3 border-2 border-teal-600 rounded-xl text-base font-mono font-bold text-slate-900 bg-white focus:outline-none"
                           />
-                          <span className="text-[11px] text-slate-500">lbr</span>
+                          <span className="text-sm font-semibold text-slate-600">lembar</span>
                           <button
                             type="button"
                             onClick={() => saveEditQuota(emp)}
                             disabled={savingEdit}
                             title="Simpan Perubahan"
-                            className="w-7 h-7 rounded-lg bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center cursor-pointer transition-colors"
+                            className="w-9 h-9 rounded-xl bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center cursor-pointer transition-colors shadow-xs"
                           >
-                            <Check className="w-3.5 h-3.5" />
+                            <Check className="w-4 h-4 stroke-[3]" />
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingId(null)}
                             title="Batal"
-                            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors"
+                            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer transition-colors"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            <X className="w-4 h-4 stroke-[3]" />
                           </button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-semibold text-slate-700">
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-mono font-bold text-slate-800 text-base px-2.5 py-1 rounded-lg bg-slate-100">
                             {emp.dailyQuotaOverride || 20} lembar
                           </span>
                           <button
                             type="button"
                             onClick={() => startEditQuota(emp)}
                             title="Edit Jatah Kuota Guru Ini"
-                            className="p-1 rounded-md text-slate-400 hover:text-teal-600 hover:bg-teal-50 cursor-pointer transition-colors"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-teal-700 hover:bg-teal-50 cursor-pointer transition-colors"
                           >
-                            <Edit2 className="w-3 h-3" />
+                            <Edit2 className="w-4 h-4" />
                           </button>
                         </div>
                       )}
                     </td>
 
-                    <td className="py-2.5 px-3.5 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         type="button"
                         onClick={() => handleRemove(emp.id)}
-                        className="p-1 text-slate-400 hover:text-rose-600 rounded-md cursor-pointer"
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl cursor-pointer transition-colors"
                         aria-label={`Hapus ${emp.name}`}
                       >
-                        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </td>
                   </tr>

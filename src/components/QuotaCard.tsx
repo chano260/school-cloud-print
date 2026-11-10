@@ -12,35 +12,44 @@ export default function QuotaCard({ dailyLimit, usedToday, remaining }: QuotaCar
   const percentage = Math.min(100, Math.round((usedToday / (dailyLimit || 1)) * 100));
 
   let barColor = 'bg-teal-600';
-  if (percentage >= 90) barColor = 'bg-rose-500';
-  else if (percentage >= 70) barColor = 'bg-amber-500';
+  let badgeColor = 'bg-teal-50 border-teal-200 text-teal-800';
+  if (percentage >= 90) {
+    barColor = 'bg-rose-500';
+    badgeColor = 'bg-rose-50 border-rose-200 text-rose-800';
+  } else if (percentage >= 70) {
+    barColor = 'bg-amber-500';
+    badgeColor = 'bg-amber-50 border-amber-200 text-amber-800';
+  }
 
   return (
     <section
       aria-label="Status Kuota Cetak Harian"
-      className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 mb-5"
+      className="bg-white rounded-3xl border border-slate-200 shadow-md p-6"
     >
-      <div className="flex items-center justify-between gap-4 mb-3">
+      <div className="flex items-center justify-between gap-4 mb-4">
         <div>
-          <p className="text-xs font-medium text-slate-500">Jatah Kuota Hari Ini</p>
-          <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 font-mono tabular-nums">
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">
+            Jatah Kuota Hari Ini
+          </p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 font-mono tabular-nums">
               {remaining}
             </span>
-            <span className="text-sm text-slate-500">lembar tersisa</span>
+            <span className="text-base sm:text-lg font-bold text-slate-600">lembar tersisa</span>
           </div>
         </div>
 
         <div className="text-right">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold font-mono tabular-nums">
+          <span className={`inline-flex items-center px-3.5 py-1.5 rounded-xl border text-sm font-extrabold font-mono tabular-nums ${badgeColor}`}>
             {usedToday} / {dailyLimit} Lembar
           </span>
-          <p className="text-[11px] text-slate-400 mt-1">Reset otomatis 00:00 WIT</p>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">Reset otomatis 00:00 WIT</p>
         </div>
       </div>
 
+      {/* Progress Bar Kuota */}
       <div
-        className="w-full bg-slate-100 rounded-full h-2 overflow-hidden"
+        className="w-full bg-slate-100 rounded-full h-3 overflow-hidden"
         role="progressbar"
         aria-valuenow={usedToday}
         aria-valuemin={0}
