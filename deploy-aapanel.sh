@@ -17,10 +17,11 @@ echo "[3/5] Menyiapkan database SQLite & Prisma Client..."
 npx prisma generate
 npx prisma db push
 
-echo "[4/5] Mem-build aplikasi Next.js untuk Production..."
+echo "[4/5] Membersihkan cache dan mem-build aplikasi Next.js untuk Production..."
+rm -rf .next
 npm run build
 
 echo "[5/5] Selesai! Anda bisa menjalankan aplikasi di aaPanel dengan:"
-echo "      - Node Project Manager: Startup File = server.js (Port 3000)"
+echo "      - Node Project Manager: Startup File = server.js (Port 3003)"
 echo "      - Atau via PM2: pm2 start ecosystem.config.js"
 echo "=========================================================="

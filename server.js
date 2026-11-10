@@ -1,5 +1,5 @@
 /**
- * Custom Production/Dev Server for aaPanel (Next.js + Socket.io Real-Time Hub)
+ * Custom Production Server for aaPanel (Next.js + Socket.io Real-Time Hub)
  * Startup file for aaPanel Node Project / PM2 Manager: `server.js`
  */
 const fs = require('fs');
@@ -10,14 +10,13 @@ const next = require('next');
 const { Server: SocketIOServer } = require('socket.io');
 const { PrismaClient } = require('@prisma/client');
 
-// Ensure working directory is always the project root even when launched by aaPanel daemon
+// Ensure working directory is always the project root
 process.chdir(__dirname);
 
-const hasProductionBuild = fs.existsSync(path.join(__dirname, '.next', 'BUILD_ID'));
-const dev = process.env.NODE_ENV === 'development' ? true : !hasProductionBuild;
-if (!dev) {
-  process.env.NODE_ENV = 'production';
-}
+// Default to production mode for stability and high performance on aaPanel
+const isExplicitDev = process.env.NODE_ENV === 'development';
+const dev = isExplicitDev;
+process.env.NODE_ENV = dev ? 'development' : 'production';
 
 const hostname = process.env.HOSTNAME || '0.0.0.0';
 const port = parseInt(process.env.PORT || '3003', 10);
@@ -109,6 +108,9 @@ app.prepare().then(() => {
   });
 
   httpServer.listen(port, hostname, () => {
-    console.log(`> School Cloud Print Server (${dev ? 'dev' : 'production'}) siap di http://${hostname}:${port}`);
+    console.log(`> School Cloud Print Server (${process.env.NODE_ENV}) siap di http://${hostname}:${port}`);
   });
+}).catch((err) => {
+  console.error('[Server Error] Gagal menyiapkan aplikasi Next.js:', err);
+  process.exit(1);
 });
