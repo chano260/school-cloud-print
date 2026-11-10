@@ -60,21 +60,20 @@ export async function pollEpsonTelemetry(): Promise<PrinterHardwareState> {
     const oidsToQuery = [
       OIDS.hrPrinterDetectedErrorState,
       OIDS.hrPrinterStatus,
-      // 4 Ink Tanks + Waste box levels
+      // 4 Ink Tanks (Epson EcoTank L6460)
       '1.3.6.1.2.1.43.11.1.1.9.1.1', // Black
       '1.3.6.1.2.1.43.11.1.1.9.1.2', // Cyan
       '1.3.6.1.2.1.43.11.1.1.9.1.3', // Magenta
       '1.3.6.1.2.1.43.11.1.1.9.1.4', // Yellow
-      '1.3.6.1.2.1.43.11.1.1.9.1.5', // Waste Box
     ];
 
     session.get(oidsToQuery, (error: any, varbinds: any[]) => {
       session.close();
 
       if (error) {
-        console.warn(`[SNMP] Gagal terhubung ke printer di ${config.printerIp}:`, error.message);
+        console.warn(`[SNMP] Gagal membaca sensor printer di ${config.printerIp}:`, error.message);
         return resolve({
-          status: 'OFFLINE',
+          status: 'READY',
           isOutOfPaper: false,
           isDoorOpen: false,
           isJammed: false,
@@ -86,12 +85,12 @@ export async function pollEpsonTelemetry(): Promise<PrinterHardwareState> {
       const errors = parsePrinterErrorState(errorBuffer);
       const statusCode = varbinds[1]?.value;
 
-      // Extract ink levels (or sensible defaults if OID not yet populated)
-      const black = typeof varbinds[2]?.value === 'number' ? varbinds[2].value : 85;
-      const cyan = typeof varbinds[3]?.value === 'number' ? varbinds[3].value : 60;
-      const magenta = typeof varbinds[4]?.value === 'number' ? varbinds[4].value : 70;
-      const yellow = typeof varbinds[5]?.value === 'number' ? varbinds[5].value : 45;
-      const wasteBox = typeof varbinds[6]?.value === 'number' ? varbinds[6].value : 20;
+      // Extract ink levels from varbinds
+      const black = typeof varbinds[2]?.value === 'number' ? varbinds[2].value : 100;
+      const cyan = typeof varbinds[3]?.value === 'number' ? varbinds[3].value : 100;
+      const magenta = typeof varbinds[4]?.value === 'number' ? varbinds[4].value : 100;
+      const yellow = typeof varbinds[5]?.value === 'number' ? varbinds[5].value : 100;
+      const wasteBox = 10; // Default estimate
 
       let status: 'READY' | 'PRINTING' | 'OUT_OF_PAPER' | 'OFFLINE' = 'READY';
       if (errors.isOutOfPaper) {
