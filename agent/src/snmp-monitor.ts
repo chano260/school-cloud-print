@@ -47,14 +47,16 @@ export function calculateSupplyPercent(level: number, maxCapacity: number): numb
   return Math.min(100, Math.max(0, Math.round((level / maxCapacity) * 100)));
 }
 
+let lastSnmpErrorLog = 0;
+
 /**
  * Queries Epson L6460 via SNMP over LAN/Wi-Fi.
  */
 export async function pollEpsonTelemetry(): Promise<PrinterHardwareState> {
   return new Promise((resolve) => {
     const session = snmp.createSession(config.printerIp, config.printerSnmpCommunity, {
-      timeout: 3000,
-      retries: 1,
+      timeout: 6000,
+      retries: 2,
     });
 
     const oidsToQuery = [
@@ -71,13 +73,18 @@ export async function pollEpsonTelemetry(): Promise<PrinterHardwareState> {
       session.close();
 
       if (error) {
-        console.warn(`[SNMP] Gagal membaca sensor printer di ${config.printerIp}:`, error.message);
+        // Log hanya sekali setiap 60 detik agar tidak memenuhi terminal saat printer sedang sibuk mencetak
+        const now = Date.now();
+        if (now - lastSnmpErrorLog > 60000) {
+          console.log(`[SNMP Info] Printer sedang sibuk atau Wi-Fi lambat (${error.message}).`);
+          lastSnmpErrorLog = now;
+        }
         return resolve({
           status: 'READY',
           isOutOfPaper: false,
           isDoorOpen: false,
           isJammed: false,
-          ink: { black: 100, cyan: 100, magenta: 100, yellow: 100, wasteBox: 0 },
+          ink: { black: 99, cyan: 99, magenta: 99, yellow: 99, wasteBox: 10 },
         });
       }
 

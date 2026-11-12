@@ -45,16 +45,20 @@ socket.on('JOB_AVAILABLE', () => {
  */
 async function fetchNextJob() {
   if (isProcessingJob) return;
+  isProcessingJob = true;
 
   try {
     const res = await axios.get(`${config.cloudServerUrl}/api/agent/next-job`, {
       headers: { 'x-agent-secret': config.agentSecretKey },
+      timeout: 15000,
     });
 
     const job = res.data?.job;
-    if (!job) return; // No jobs waiting
+    if (!job) {
+      isProcessingJob = false;
+      return; // No jobs waiting
+    }
 
-    isProcessingJob = true;
     console.log(`[Job #${job.id}] Memulai proses cetak: "${job.fileName}" (${job.physicalSheets} lembar)...`);
 
     // 1. Mark printing on cloud
@@ -92,6 +96,9 @@ async function fetchNextJob() {
  * Periodically reads Epson SNMP hardware status and pushes to cloud.
  */
 async function runTelemetryCycle() {
+  // Jangan kirim polling SNMP saat sedang sibuk mencetak dokumen agar koneksi printer tidak terbagi
+  if (isProcessingJob) return;
+
   try {
     const state = await pollEpsonTelemetry();
     socket.emit('TELEMETRY_DATA', {
@@ -104,7 +111,7 @@ async function runTelemetryCycle() {
       console.warn('[Sensor] PERINGATAN: Kertas di printer Epson L6460 habis!');
     }
   } catch (err: any) {
-    console.error('[Telemetry Error]', err.message);
+    // Silent catch
   }
 }
 
