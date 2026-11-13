@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PrinterStatusCard from '@/components/admin/PrinterStatusCard';
 import WhitelistManager from '@/components/admin/WhitelistManager';
+import AdminFileList from '@/components/admin/AdminFileList';
 import QueueList from '@/components/QueueList';
 import { InkLevels, PrinterStatus } from '@/types';
 import {
@@ -13,6 +14,9 @@ import {
   LogOut,
   AlertCircle,
   KeyRound,
+  FileText,
+  Users,
+  Printer,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,6 +25,7 @@ export default function AdminDashboardPage() {
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState<string | null>(null);
   const [submittingPin, setSubmittingPin] = useState(false);
+  const [activeTab, setActiveTab] = useState<'files' | 'whitelist' | 'printer'>('files');
 
   const [status, setStatus] = useState<PrinterStatus>('READY');
   const [ink, setInk] = useState<InkLevels>({
@@ -121,8 +126,8 @@ export default function AdminDashboardPage() {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center animate-spin">
-            <Shield className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-emerald-900 text-white flex items-center justify-center animate-spin">
+            <Shield className="w-5 h-5 text-emerald-300" />
           </div>
           <p className="text-sm font-semibold text-slate-600">Memverifikasi hak akses Admin TU...</p>
         </div>
@@ -131,7 +136,7 @@ export default function AdminDashboardPage() {
   }
 
   // ==========================================
-  // VIEW 1: ADMIN LOGIN SCREEN (PROTECTION)
+  // VIEW 1: ADMIN LOGIN SCREEN (PROTECTED)
   // ==========================================
   if (!isAdmin) {
     return (
@@ -146,7 +151,7 @@ export default function AdminDashboardPage() {
                 Akses Terbatas: Admin TU
               </h1>
               <p className="text-sm text-slate-500 mt-2 leading-relaxed">
-                Panel khusus petugas Tata Usaha untuk mengelola kuota guru dan sensor tinta printer.
+                Panel khusus petugas Tata Usaha untuk mengelola berkas cetak, kuota guru, dan sensor tinta printer.
               </p>
             </div>
 
@@ -211,8 +216,8 @@ export default function AdminDashboardPage() {
   // ==========================================
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900 pb-20">
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-xs">
-        <div className="max-w-3xl mx-auto px-4 h-20 flex items-center justify-between">
+      <header className="bg-white/95 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-20 shadow-xs">
+        <div className="max-w-4xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -222,11 +227,11 @@ export default function AdminDashboardPage() {
               <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             </Link>
             <div>
-              <h1 className="font-bold text-base sm:text-lg text-slate-900 leading-tight">
+              <h1 className="font-extrabold text-base sm:text-lg text-slate-900 leading-tight">
                 Panel Admin TU • SMAN 3 Buru
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500">
-                Kelola Jatah Kuota Guru & Pantau Sensor Tinta Epson L6460
+              <p className="text-xs sm:text-sm text-emerald-700 font-medium">
+                Arsip Berkas Cetak, Pengaturan Kuota & Sensor Epson L6460
               </p>
             </div>
           </div>
@@ -253,10 +258,70 @@ export default function AdminDashboardPage() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 pt-6 space-y-6">
-        <PrinterStatusCard status={status} ink={ink} />
-        <WhitelistManager />
-        <QueueList jobs={jobs} currentUserId="" onRefresh={fetchAdminData} />
+      <div className="max-w-4xl mx-auto px-4 pt-6 space-y-6">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
+          <button
+            type="button"
+            onClick={() => setActiveTab('files')}
+            className={`h-11 px-5 rounded-2xl text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'files'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span>Semua Berkas Cetak Guru</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('whitelist')}
+            className={`h-11 px-5 rounded-2xl text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'whitelist'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Daftar Guru & Kuota</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('printer')}
+            className={`h-11 px-5 rounded-2xl text-sm font-extrabold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'printer'
+                ? 'bg-emerald-800 text-white shadow-md'
+                : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+            }`}
+          >
+            <Printer className="w-4 h-4" />
+            <span>Status Printer & Tinta</span>
+          </button>
+        </div>
+
+        {/* Tab 1: Berkas Cetak Guru */}
+        {activeTab === 'files' && (
+          <div>
+            <AdminFileList />
+          </div>
+        )}
+
+        {/* Tab 2: Daftar Guru & Kuota */}
+        {activeTab === 'whitelist' && (
+          <div>
+            <WhitelistManager />
+          </div>
+        )}
+
+        {/* Tab 3: Status Printer & Sensor Tinta */}
+        {activeTab === 'printer' && (
+          <div className="space-y-6">
+            <PrinterStatusCard status={status} ink={ink} />
+            <QueueList jobs={jobs} currentUserId="" onRefresh={fetchAdminData} />
+          </div>
+        )}
       </div>
     </main>
   );

@@ -2,7 +2,17 @@
 
 import React, { useState } from 'react';
 import { PrintJob } from '@prisma/client';
-import { Clock, Play, CheckCircle2, AlertTriangle, Lock, FileText, RefreshCw } from 'lucide-react';
+import {
+  Clock,
+  Play,
+  CheckCircle2,
+  AlertTriangle,
+  Lock,
+  FileText,
+  RefreshCw,
+  RotateCcw,
+  Download,
+} from 'lucide-react';
 
 interface QueueListProps {
   jobs: (PrintJob & { user?: { name?: string | null; email?: string | null } })[];
@@ -12,6 +22,7 @@ interface QueueListProps {
 
 export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListProps) {
   const [releasingId, setReleasingId] = useState<string | null>(null);
+  const [reprintingId, setReprintingId] = useState<string | null>(null);
 
   const handleRelease = async (jobId: string) => {
     if (
@@ -40,6 +51,32 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
       alert(e.message);
     } finally {
       setReleasingId(null);
+    }
+  };
+
+  const handleReprint = async (jobId: string) => {
+    if (!confirm('Kirim ulang dokumen ini ke antrean printer TU untuk dicetak kembali?')) {
+      return;
+    }
+
+    setReprintingId(jobId);
+    try {
+      const res = await fetch('/api/jobs/reprint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jobId }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Gagal mengirim ulang dokumen.');
+      } else {
+        onRefresh();
+      }
+    } catch (e: any) {
+      alert(e.message);
+    } finally {
+      setReprintingId(null);
     }
   };
 
@@ -139,9 +176,22 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 self-end sm:self-center">
+              <div className="flex flex-wrap items-center gap-2 self-end sm:self-center">
                 {getStatusBadge(job)}
 
+                {/* Buka/Unduh Berkas */}
+                <a
+                  href={`/api/agent/files/${job.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-10 px-3 hover:bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 text-sm font-bold rounded-xl transition-colors inline-flex items-center gap-1.5 shadow-xs"
+                  title="Lihat / Unduh Dokumen Asli"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">File</span>
+                </a>
+
+                {/* Tombol Rilis Jika Terkunci */}
                 {job.status === 'LOCKED' &&
                   (!currentUserId || job.userId === currentUserId) && (
                     <button
@@ -152,6 +202,21 @@ export default function QueueList({ jobs, currentUserId, onRefresh }: QueueListP
                     >
                       <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
                       <span>{releasingId === job.id ? 'Merilis...' : 'Rilis Sekarang'}</span>
+                    </button>
+                  )}
+
+                {/* Tombol Cetak Ulang untuk Dokumen Selesai / Gagal */}
+                {(job.status === 'COMPLETED' || job.status === 'FAILED' || job.status === 'EXPIRED') &&
+                  (!currentUserId || job.userId === currentUserId) && (
+                    <button
+                      type="button"
+                      onClick={() => handleReprint(job.id)}
+                      disabled={reprintingId === job.id}
+                      className="h-10 px-3.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-sm font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                      title="Kirim ulang dokumen ini ke antrean printer TU"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>{reprintingId === job.id ? 'Mengirim...' : 'Cetak Ulang'}</span>
                     </button>
                   )}
               </div>
